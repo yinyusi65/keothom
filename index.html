@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="page_title">Đề xuất Dự án "Kèo Thơm"</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Sand & Teal -->
+    <!-- Application Structure Plan: The application is structured as a single-page dashboard with a sticky navigation bar for thematic exploration (Overview, Market, Product, Plan, Competition). This non-linear structure is chosen over the original report's linear format to allow users to quickly jump to sections of interest. It enhances usability by grouping related information and using interactive visualizations like the radar chart to make complex data, such as competitive analysis, more digestible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        1. Report Info: Competitive Matrix -> Goal: Compare -> Viz/Presentation: Interactive Radar Chart -> Interaction: Hover tooltips for data points -> Justification: A radar chart provides a much more intuitive and immediate multi-variable comparison than a static table, highlighting strengths and weaknesses visually. -> Library/Method: Chart.js/Canvas.
+        2. Report Info: Business Model Phases -> Goal: Inform/Organize -> Viz/Presentation: Interactive Toggle Buttons -> Interaction: Click to show/hide phase details -> Justification: This makes the section interactive and reduces initial information overload, presenting content cleanly. -> Library/Method: Vanilla JS DOM manipulation.
+        3. Report Info: Development Roadmap -> Goal: Show Change/Timeline -> Viz/Presentation: Horizontal Visual Timeline -> Interaction: Static Visual -> Justification: A visual timeline is more engaging and easier to follow chronologically than a simple text list. -> Library/Method: HTML/Tailwind CSS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #14B8A6;
+            border-bottom-color: #14B8A6;
+        }
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #F3EFEA;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .section-title {
+            color: #D97706;
+        }
+        .btn-primary {
+            background-color: #14B8A6;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0F766E;
+        }
+        .btn-secondary {
+            background-color: #F1F5F9;
+            color: #475569;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary.active {
+            background-color: #14B8A6;
+            color: white;
+        }
+        .lang-btn {
+            background-color: #e2e8f0;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .lang-btn.active {
+            background-color: #14B8A6;
+            color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="absolute top-4 right-4 z-50">
+        <div class="flex space-x-1 bg-gray-200 p-1 rounded-lg">
+            <button id="lang-vi" class="lang-btn">VI</button>
+            <button id="lang-en" class="lang-btn">EN</button>
+        </div>
+    </div>
+
+    <header class="text-center py-8 px-4 bg-white border-b border-gray-200">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800" data-translate-key="header_title">Dự án "Kèo Thơm"</h1>
+        <p class="mt-2 text-lg text-gray-500" data-translate-key="header_tagline">Kết nối tức thời, Gắn kết cộng đồng.</p>
+    </header>
+
+    <nav class="sticky top-0 bg-white/80 backdrop-blur-md z-40 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-center items-center h-16 space-x-4 md:space-x-8">
+                <a href="#overview" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_overview">Tổng Quan</a>
+                <a href="#market" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_market">Thị Trường</a>
+                <a href="#product" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_product">Sản Phẩm</a>
+                <a href="#plan" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_plan">Kế Hoạch</a>
+                <a href="#competition" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_competition">Cạnh Tranh</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 md:p-8">
+        
+        <section id="overview" class="py-12 md:py-16">
+            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="overview_title">Tổng Quan Dự Án</h2>
+            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="overview_subtitle">"Kèo Thơm" là ứng dụng di động siêu địa phương, biến mọi khoảnh khắc rảnh rỗi thành cơ hội kết nối thực, giải quyết vấn đề "cô đơn kỹ thuật số" trong cộng đồng sinh viên.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-2xl font-semibold mb-4 text-red-600 flex items-center" data-translate-key="problem_title"><span class="text-3xl mr-3">⚠️</span>Vấn Đề</h3>
+                    <ul class="space-y-3 text-gray-700 list-inside">
+                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_1_strong">Sự cô đơn:</strong> <span data-translate-key="problem_1_text">Cảm thấy lạc lõng dù có hàng trăm bạn bè trực tuyến.</span></li>
+                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_2_strong">Khó kết nối ngẫu hứng:</strong> <span data-translate-key="problem_2_text">Lịch trình cố định và các nhóm bạn khép kín cản trở các hoạt động tự phát.</span></li>
+                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_3_strong">Kênh hiện tại rời rạc:</strong> <span data-translate-key="problem_3_text">Facebook quá nhiễu loạn, Zalo chỉ giới hạn trong nhóm quen biết.</span></li>
+                    </ul>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-2xl font-semibold mb-4 text-green-600 flex items-center" data-translate-key="solution_title"><span class="text-3xl mr-3">💡</span>Giải Pháp</h3>
+                    <p class="mb-4 text-gray-700" data-translate-key="solution_text">"Kèo Thơm" là nền tảng tập trung vào kết nối xã hội trong thời gian thực, cho phép người dùng đăng và khám phá các "kèo" xung quanh mình một cách nhanh chóng.</p>
+                    <div class="space-y-3">
+                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp1">✓ Tập trung vào sự tức thời.</p>
+                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp2">✓ Siêu địa phương (Hyperlocal).</p>
+                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp3">✓ An toàn và xác thực cộng đồng.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="market" class="py-12 md:py-16">
+            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="market_title">Thị Trường & Tiềm Năng</h2>
+            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="market_subtitle">Với văn hóa "tụ tập", tỷ lệ dùng smartphone cao và khoảng trống trên thị trường, Việt Nam là mảnh đất màu mỡ cho sự phát triển của "Kèo Thơm".</p>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4" data-translate-key="target_market_title">Thị Trường Mục Tiêu</h3>
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-teal-600" data-translate-key="target_market_phase1_title">Giai đoạn 1:</h4>
+                        <p class="text-gray-700" data-translate-key="target_market_phase1_text">Sinh viên năm 1-2 tại các trường đại học lớn ở Hà Nội. Đây là nhóm năng động, cởi mở và có nhu cầu kết nối cao nhất.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-teal-600" data-translate-key="target_market_phase2_title">Giai đoạn 2:</h4>
+                        <p class="text-gray-700" data-translate-key="target_market_phase2_text">Mở rộng ra toàn bộ sinh viên, học sinh cấp 3, và nhân viên văn phòng trên cả nước.</p>
+                    </div>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4" data-translate-key="potential_title">Tiềm Năng Vượt Trội</h3>
+                     <ul class="space-y-2 text-gray-700 list-inside">
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_1">Văn hóa "tụ tập" đặc trưng của giới trẻ Việt.</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_2">Tỷ lệ sử dụng smartphone và Internet rất cao.</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_3">Nhu cầu kết nối trực tiếp tăng mạnh hậu giãn cách.</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_4">Khoảng trống thị trường cho ứng dụng kết nối tức thời.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="product" class="py-12 md:py-16">
+            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="product_title">Sản Phẩm & Mô Hình Kinh Doanh</h2>
+            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="product_subtitle">Sản phẩm MVP (Tối thiểu khả dụng) tập trung vào các tính năng cốt lõi, đi kèm với một mô hình kinh doanh theo giai đoạn linh hoạt.</p>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4" data-translate-key="features_title">Tính Năng Chính (Phiên bản MVP)</h3>
+                    <ul class="grid grid-cols-2 gap-4 text-gray-700">
+                        <li class="flex items-center" data-translate-key="feature_1"><span class="text-2xl mr-2">✅</span>Đăng ký/Đăng nhập</li>
+                        <li class="flex items-center" data-translate-key="feature_2"><span class="text-2xl mr-2">📝</span>Tạo Kèo đơn giản</li>
+                        <li class="flex items-center" data-translate-key="feature_3"><span class="text-2xl mr-2">🗺️</span>Xem Kèo xung quanh</li>
+                        <li class="flex items-center" data-translate-key="feature_4"><span class="text-2xl mr-2">👍</span>Tham gia Kèo</li>
+                        <li class="flex items-center" data-translate-key="feature_5"><span class="text-2xl mr-2">💬</span>Chat Nhóm tạm thời</li>
+                        <li class="flex items-center" data-translate-key="feature_6"><span class="text-2xl mr-2">🛡️</span>Xác thực & Điều khoản</li>
+                    </ul>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4" data-translate-key="bizmodel_title">Mô Hình Kinh Doanh</h3>
+                    <div class="flex space-x-2 mb-4">
+                        <button id="btnPhase1" class="btn-secondary active px-4 py-2 rounded-lg font-semibold w-full" data-translate-key="bizmodel_btn1">Giai đoạn 1: Tăng trưởng</button>
+                        <button id="btnPhase2" class="btn-secondary px-4 py-2 rounded-lg font-semibold w-full" data-translate-key="bizmodel_btn2">Giai đoạn 2: Doanh thu</button>
+                    </div>
+                    <div id="contentPhase1">
+                        <p class="text-sm font-semibold text-gray-500 mb-2" data-translate-key="bizmodel_phase1_subtitle">0-6 tháng</p>
+                        <p class="text-gray-700" data-translate-key="bizmodel_phase1_text">Tập trung tăng trưởng người dùng, ứng dụng **hoàn toàn miễn phí**. Mục tiêu duy nhất là thu hút lượng người dùng đủ lớn để nền tảng trở nên hữu ích.</p>
+                    </div>
+                    <div id="contentPhase2" class="hidden">
+                        <p class="text-sm font-semibold text-gray-500 mb-2" data-translate-key="bizmodel_phase2_subtitle">Sau 6 tháng</p>
+                        <ul class="space-y-2 text-gray-700">
+                            <li data-translate-key="bizmodel_phase2_item1"><strong>Kèo Tài Trợ (B2B):</strong> Các cửa hàng, quán cà phê trả phí để tạo "kèo" nổi bật kèm ưu đãi.</li>
+                            <li data-translate-key="bizmodel_phase2_item2"><strong>Tính năng Premium (Freemium):</strong> Tính năng nâng cao trả phí cho người dùng (bộ lọc, kèo ẩn danh...).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plan" class="py-12 md:py-16">
+            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="plan_title">Kế Hoạch Hành Động</h2>
+            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="plan_subtitle">Từ việc hoàn thiện kế hoạch đến ra mắt chính thức và mở rộng, lộ trình được vạch ra rõ ràng theo từng quý.</p>
+
+            <div class="relative w-full">
+                <div class="border-l-4 border-teal-200 absolute h-full top-0 left-1/2 -translate-x-1/2"></div>
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="flex justify-center items-center w-full">
+                        <div class="w-1/2 flex justify-end">
+                            <div class="text-right pr-8">
+                                <p class="font-bold text-teal-700" data-translate-key="roadmap_q4_2025_title">Quý 4/2025</p>
+                                <p class="text-sm text-gray-600" data-translate-key="roadmap_q4_2025_text">Hoàn thiện kế hoạch, lập team, thiết kế Wireframe & Prototype.</p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">1</div>
+                        <div class="w-1/2"></div>
+                    </div>
+                    <div class="flex justify-center items-center w-full">
+                        <div class="w-1/2"></div>
+                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">2</div>
+                        <div class="w-1/2 pl-8">
+                            <p class="font-bold text-teal-700" data-translate-key="roadmap_q12_2026_title">Quý 1-2/2026</p>
+                            <p class="text-sm text-gray-600" data-translate-key="roadmap_q12_2026_text">Phát triển và hoàn thiện phiên bản MVP. Tiến hành Alpha & Beta Test.</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center w-full">
+                        <div class="w-1/2 flex justify-end">
+                            <div class="text-right pr-8">
+                                <p class="font-bold text-teal-700" data-translate-key="roadmap_q3_2026_title">Quý 3/2026</p>
+                                <p class="text-sm text-gray-600" data-translate-key="roadmap_q3_2026_text">Ra mắt chính thức tại 1-2 trường đại học mục tiêu. Triển khai Go-to-Market.</p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">3</div>
+                        <div class="w-1/2"></div>
+                    </div>
+                    <div class="flex justify-center items-center w-full">
+                        <div class="w-1/2"></div>
+                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">4</div>
+                        <div class="w-1/2 pl-8">
+                             <p class="font-bold text-teal-700" data-translate-key="roadmap_q4_2026_title">Quý 4/2026+</p>
+                            <p class="text-sm text-gray-600" data-translate-key="roadmap_q4_2026_text">Phân tích dữ liệu, cải tiến sản phẩm và lên kế hoạch mở rộng.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competition" class="py-12 md:py-16">
+            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="competition_title">Phân Tích Cạnh Tranh</h2>
+             <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="competition_subtitle">"Kèo Thơm" chiếm lĩnh một thị trường ngách độc đáo, vượt trội so với các giải pháp gián tiếp nhờ "Sức mạnh của sự tập trung".</p>
+            <div class="grid lg:grid-cols-2 gap-8 items-center">
+                <div class="card p-6 rounded-xl">
+                    <div class="chart-container w-full max-w-lg mx-auto h-80 md:h-96">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+                <div class="card p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4" data-translate-key="moat_title">"Con Hào" Của Chúng Tôi</h3>
+                    <p class="text-gray-700" data-translate-key="moat_text1">
+                        Điều gì ngăn cản Facebook thêm một tính năng "Hẹn kèo"? Câu trả lời nằm ở lợi thế cạnh tranh bền vững của chúng tôi: **sự tập trung**.
+                    </p>
+                    <p class="mt-4 text-gray-700" data-translate-key="moat_text2">
+                        Các nền tảng lớn được thiết kế để làm mọi thứ, dẫn đến trải nghiệm nhiễu loạn. Ngược lại, "Kèo Thơm" chỉ làm một việc duy nhất và làm nó tốt nhất: tạo ra các kết nối ngẫu hứng. Chúng tôi mang lại một trải nghiệm người dùng **mượt mà, nhanh chóng và không bị làm phiền**, điều mà các nền tảng đa năng không thể sao chép.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="container mx-auto px-8 py-12">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-800" data-translate-key="cta_title">Kêu Gọi Hành Động</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-gray-600" data-translate-key="cta_subtitle">Dự án "Kèo Thơm" đang ở giai đoạn đầu và đầy tiềm năng. Chúng tôi đang tích cực tìm kiếm:</p>
+                <div class="mt-8 grid md:grid-cols-3 gap-8">
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_cofounders_title">Đồng sáng lập</h3>
+                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_cofounders_text">Những người có cùng đam mê, đặc biệt trong lĩnh vực Lập trình và Thiết kế.</p>
+                    </div>
+                     <div class="card p-6 rounded-xl">
+                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_mentors_title">Cố vấn</h3>
+                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_mentors_text">Sự mentorship từ các chuyên gia trong lĩnh vực phát triển sản phẩm công nghệ và khởi nghiệp.</p>
+                    </div>
+                     <div class="card p-6 rounded-xl">
+                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_partners_title">Đối tác</h3>
+                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_partners_text">Các Câu lạc bộ sinh viên để hợp tác triển khai và quảng bá ứng dụng trong giai đoạn ra mắt.</p>
+                    </div>
+                </div>
+                 <div class="mt-10">
+                    <a href="#" class="btn-primary px-8 py-3 rounded-lg font-semibold inline-block" data-translate-key="cta_button">Liên Hệ Với Chúng Tôi</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const translations = {
+                page_title: { vi: 'Đề xuất Dự án "Kèo Thơm"', en: '"Kèo Thơm" Project Proposal' },
+                header_title: { vi: 'Dự án "Kèo Thơm"', en: '"Kèo Thơm" Project' },
+                header_tagline: { vi: 'Kết nối tức thời, Gắn kết cộng đồng.', en: 'Spontaneous Connections, Stronger Communities.' },
+                nav_overview: { vi: 'Tổng Quan', en: 'Overview' },
+                nav_market: { vi: 'Thị Trường', en: 'Market' },
+                nav_product: { vi: 'Sản Phẩm', en: 'Product' },
+                nav_plan: { vi: 'Kế Hoạch', en: 'Plan' },
+                nav_competition: { vi: 'Cạnh Tranh', en: 'Competition' },
+                overview_title: { vi: 'Tổng Quan Dự Án', en: 'Project Overview' },
+                overview_subtitle: { vi: '"Kèo Thơm" là ứng dụng di động siêu địa phương, biến mọi khoảnh khắc rảnh rỗi thành cơ hội kết nối thực, giải quyết vấn đề "cô đơn kỹ thuật số" trong cộng đồng sinh viên.', en: '"Kèo Thơm" is a hyperlocal mobile app that turns every spare moment into a real connection opportunity, solving the "digital loneliness" issue among students.' },
+                problem_title: { vi: 'Vấn Đề', en: 'The Problem' },
+                problem_1_strong: { vi: 'Sự cô đơn:', en: 'Loneliness:' },
+                problem_1_text: { vi: 'Cảm thấy lạc lõng dù có hàng trăm bạn bè trực tuyến.', en: 'Feeling isolated despite having hundreds of online friends.' },
+                problem_2_strong: { vi: 'Khó kết nối ngẫu hứng:', en: 'Difficulty in spontaneous connection:' },
+                problem_2_text: { vi: 'Lịch trình cố định và các nhóm bạn khép kín cản trở các hoạt động tự phát.', en: 'Fixed schedules and closed friend groups hinder spontaneous activities.' },
+                problem_3_strong: { vi: 'Kênh hiện tại rời rạc:', en: 'Fragmented channels:' },
+                problem_3_text: { vi: 'Facebook quá nhiễu loạn, Zalo chỉ giới hạn trong nhóm quen biết.', en: 'Facebook is too noisy, Zalo is limited to existing acquaintances.' },
+                solution_title: { vi: 'Giải Pháp', en: 'The Solution' },
+                solution_text: { vi: '"Kèo Thơm" là nền tảng tập trung vào kết nối xã hội trong thời gian thực, cho phép người dùng đăng và khám phá các "kèo" xung quanh mình một cách nhanh chóng.', en: '"Kèo Thơm" is a platform focused on real-time social connections, allowing users to quickly post and discover "kèos" around them.' },
+                solution_usp1: { vi: '✓ Tập trung vào sự tức thời.', en: '✓ Focus on Immediacy.' },
+                solution_usp2: { vi: '✓ Siêu địa phương (Hyperlocal).', en: '✓ Hyperlocal Focus.' },
+                solution_usp3: { vi: '✓ An toàn và xác thực cộng đồng.', en: '✓ Safe & Authenticated Community.' },
+                market_title: { vi: 'Thị Trường & Tiềm Năng', en: 'Market & Potential' },
+                market_subtitle: { vi: 'Với văn hóa "tụ tập", tỷ lệ dùng smartphone cao và khoảng trống trên thị trường, Việt Nam là mảnh đất màu mỡ cho sự phát triển của "Kèo Thơm".', en: 'With its "get-together" culture, high smartphone penetration, and a market gap, Vietnam is a fertile ground for "Kèo Thơm".' },
+                target_market_title: { vi: 'Thị Trường Mục Tiêu', en: 'Target Market' },
+                target_market_phase1_title: { vi: 'Giai đoạn 1:', en: 'Phase 1:' },
+                target_market_phase1_text: { vi: 'Sinh viên năm 1-2 tại các trường đại học lớn ở Hà Nội. Đây là nhóm năng động, cởi mở và có nhu cầu kết nối cao nhất.', en: '1st-2nd year students at major universities in Hanoi. This group is dynamic, open-minded, and has the highest need for connection.' },
+                target_market_phase2_title: { vi: 'Giai đoạn 2:', en: 'Phase 2:' },
+                target_market_phase2_text: { vi: 'Mở rộng ra toàn bộ sinh viên, học sinh cấp 3, và nhân viên văn phòng trên cả nước.', en: 'Expand to all university/high school students, and office workers nationwide.' },
+                potential_title: { vi: 'Tiềm Năng Vượt Trội', en: 'Outstanding Potential' },
+                potential_1: { vi: 'Văn hóa "tụ tập" đặc trưng của giới trẻ Việt.', en: 'The unique "get-together" culture of Vietnamese youth.' },
+                potential_2: { vi: 'Tỷ lệ sử dụng smartphone và Internet rất cao.', en: 'Very high smartphone and Internet penetration rate.' },
+                potential_3: { vi: 'Nhu cầu kết nối trực tiếp tăng mạnh hậu giãn cách.', en: 'Strong demand for face-to-face connection post-social distancing.' },
+                potential_4: { vi: 'Khoảng trống thị trường cho ứng dụng kết nối tức thời.', en: 'A market gap for an instant connection application.' },
+                product_title: { vi: 'Sản Phẩm & Mô Hình Kinh Doanh', en: 'Product & Business Model' },
+                product_subtitle: { vi: 'Sản phẩm MVP (Tối thiểu khả dụng) tập trung vào các tính năng cốt lõi, đi kèm với một mô hình kinh doanh theo giai đoạn linh hoạt.', en: 'The MVP (Minimum Viable Product) focuses on core features, paired with a flexible, phased business model.' },
+                features_title: { vi: 'Tính Năng Chính (Phiên bản MVP)', en: 'Core Features (MVP Version)' },
+                feature_1: { vi: '<span class="text-2xl mr-2">✅</span>Đăng ký/Đăng nhập', en: '<span class="text-2xl mr-2">✅</span>Sign-up/Login' },
+                feature_2: { vi: '<span class="text-2xl mr-2">📝</span>Tạo Kèo đơn giản', en: '<span class="text-2xl mr-2">📝</span>Simple "Kèo" Creation' },
+                feature_3: { vi: '<span class="text-2xl mr-2">🗺️</span>Xem Kèo xung quanh', en: '<span class="text-2xl mr-2">🗺️</span>Browse Nearby "Kèos"' },
+                feature_4: { vi: '<span class="text-2xl mr-2">👍</span>Tham gia Kèo', en: '<span class="text-2xl mr-2">👍</span>Join "Kèo"' },
+                feature_5: { vi: '<span class="text-2xl mr-2">💬</span>Chat Nhóm tạm thời', en: '<span class="text-2xl mr-2">💬</span>Temporary Group Chat' },
+                feature_6: { vi: '<span class="text-2xl mr-2">🛡️</span>Xác thực & Điều khoản', en: '<span class="text-2xl mr-2">🛡️</span>Verification & Terms' },
+                bizmodel_title: { vi: 'Mô Hình Kinh Doanh', en: 'Business Model' },
+                bizmodel_btn1: { vi: 'Giai đoạn 1: Tăng trưởng', en: 'Phase 1: Growth' },
+                bizmodel_btn2: { vi: 'Giai đoạn 2: Doanh thu', en: 'Phase 2: Monetization' },
+                bizmodel_phase1_subtitle: { vi: '0-6 tháng', en: '0-6 Months' },
+                bizmodel_phase1_text: { vi: 'Tập trung tăng trưởng người dùng, ứng dụng **hoàn toàn miễn phí**. Mục tiêu duy nhất là thu hút lượng người dùng đủ lớn để nền tảng trở nên hữu ích.', en: 'Focus on user growth, the app is **completely free**. The sole objective is to attract a critical mass of users to make the platform useful.' },
+                bizmodel_phase2_subtitle: { vi: 'Sau 6 tháng', en: 'After 6 Months' },
+                bizmodel_phase2_item1: { vi: '<strong>Kèo Tài Trợ (B2B):</strong> Các cửa hàng, quán cà phê trả phí để tạo "kèo" nổi bật kèm ưu đãi.', en: '<strong>Sponsored "Kèos" (B2B):</strong> Cafes and shops pay to create featured "kèos" with special offers.' },
+                bizmodel_phase2_item2: { vi: '<strong>Tính năng Premium (Freemium):</strong> Tính năng nâng cao trả phí cho người dùng (bộ lọc, kèo ẩn danh...).', en: '<strong>Premium Features (Freemium):</strong> Paid advanced features for users (filters, anonymous mode...).' },
+                plan_title: { vi: 'Kế Hoạch Hành Động', en: 'Action Plan' },
+                plan_subtitle: { vi: 'Từ việc hoàn thiện kế hoạch đến ra mắt chính thức và mở rộng, lộ trình được vạch ra rõ ràng theo từng quý.', en: 'From planning to official launch and expansion, the roadmap is clearly defined quarterly.' },
+                roadmap_q4_2025_title: { vi: 'Quý 4/2025', en: 'Q4/2025' },
+                roadmap_q4_2025_text: { vi: 'Hoàn thiện kế hoạch, lập team, thiết kế Wireframe & Prototype.', en: 'Finalize plan, assemble team, design Wireframe & Prototype.' },
+                roadmap_q12_2026_title: { vi: 'Quý 1-2/2026', en: 'Q1-2/2026' },
+                roadmap_q12_2026_text: { vi: 'Phát triển và hoàn thiện phiên bản MVP. Tiến hành Alpha & Beta Test.', en: 'Develop and finalize MVP. Conduct Alpha & Beta Tests.' },
+                roadmap_q3_2026_title: { vi: 'Quý 3/2026', en: 'Q3/2026' },
+                roadmap_q3_2026_text: { vi: 'Ra mắt chính thức tại 1-2 trường đại học mục tiêu. Triển khai Go-to-Market.', en: 'Official launch at 1-2 target universities. Deploy Go-to-Market strategy.' },
+                roadmap_q4_2026_title: { vi: 'Quý 4/2026+', en: 'Q4/2026+' },
+                roadmap_q4_2026_text: { vi: 'Phân tích dữ liệu, cải tiến sản phẩm và lên kế hoạch mở rộng.', en: 'Analyze data, improve the product, and plan for expansion.' },
+                competition_title: { vi: 'Phân Tích Cạnh Tranh', en: 'Competitive Analysis' },
+                competition_subtitle: { vi: '"Kèo Thơm" chiếm lĩnh một thị trường ngách độc đáo, vượt trội so với các giải pháp gián tiếp nhờ "Sức mạnh của sự tập trung".', en: '"Kèo Thơm" occupies a unique niche, outperforming indirect solutions with "The Power of Focus".' },
+                moat_title: { vi: '"Con Hào" Của Chúng Tôi', en: 'Our Moat' },
+                moat_text1: { vi: 'Điều gì ngăn cản Facebook thêm một tính năng "Hẹn kèo"? Câu trả lời nằm ở lợi thế cạnh tranh bền vững của chúng tôi: **sự tập trung**.', en: 'What stops Facebook from adding a "hangout" feature? The answer lies in our sustainable competitive advantage: **focus**.' },
+                moat_text2: { vi: 'Các nền tảng lớn được thiết kế để làm mọi thứ, dẫn đến trải nghiệm nhiễu loạn. Ngược lại, "Kèo Thơm" chỉ làm một việc duy nhất và làm nó tốt nhất: tạo ra các kết nối ngẫu hứng. Chúng tôi mang lại một trải nghiệm người dùng **mượt mà, nhanh chóng và không bị làm phiền**, điều mà các nền tảng đa năng không thể sao chép.', en: 'Large platforms are designed to do everything, leading to a cluttered experience. In contrast, "Kèo Thơm" does one thing best: facilitating spontaneous connections. We deliver a **seamless, fast, and distraction-free** user experience that versatile platforms cannot replicate.' },
+                cta_title: { vi: 'Kêu Gọi Hành Động', en: 'Call to Action' },
+                cta_subtitle: { vi: 'Dự án "Kèo Thơm" đang ở giai đoạn đầu và đầy tiềm năng. Chúng tôi đang tích cực tìm kiếm:', en: 'The "Kèo Thơm" project is in its early, high-potential stage. We are actively looking for:' },
+                cta_cofounders_title: { vi: 'Đồng sáng lập', en: 'Co-founders' },
+                cta_cofounders_text: { vi: 'Những người có cùng đam mê, đặc biệt trong lĩnh vực Lập trình và Thiết kế.', en: 'Passionate individuals, especially in Programming and Design.' },
+                cta_mentors_title: { vi: 'Cố vấn', en: 'Mentors' },
+                cta_mentors_text: { vi: 'Sự mentorship từ các chuyên gia trong lĩnh vực phát triển sản phẩm công nghệ và khởi nghiệp.', en: 'Mentorship from experts in tech product development and entrepreneurship.' },
+                cta_partners_title: { vi: 'Đối tác', en: 'Partners' },
+                cta_partners_text: { vi: 'Các Câu lạc bộ sinh viên để hợp tác triển khai và quảng bá ứng dụng trong giai đoạn ra mắt.', en: 'Student clubs to collaborate on the launch and promotion of the app.' },
+                cta_button: { vi: 'Liên Hệ Với Chúng Tôi', en: 'Contact Us' },
+                radar_labels: {
+                    vi: ['Tính tức thời', 'Mức độ địa phương', 'Mục đích sử dụng', 'Mức độ an toàn', 'Trải nghiệm người dùng'],
+                    en: ['Immediacy', 'Hyperlocal Focus', 'Primary Purpose', 'Safety Level', 'User Experience']
+                },
+                radar_dataset_keothom: { vi: 'Kèo Thơm', en: 'Kèo Thơm' },
+                radar_dataset_facebook: { vi: 'Facebook Groups', en: 'Facebook Groups' },
+                radar_dataset_zalo: { vi: 'Zalo/Messenger', en: 'Zalo/Messenger' }
+            };
+
+            let radarChartInstance = null;
+            const radarCtx = document.getElementById('radarChart').getContext('2d');
+
+            function createRadarChart(lang) {
+                if (radarChartInstance) {
+                    radarChartInstance.destroy();
+                }
+
+                const radarData = {
+                    labels: translations.radar_labels[lang],
+                    datasets: [{
+                        label: translations.radar_dataset_keothom[lang],
+                        data: [9, 10, 9, 8, 9],
+                        backgroundColor: 'rgba(20, 184, 166, 0.2)',
+                        borderColor: 'rgba(13, 148, 136, 1)',
+                        pointBackgroundColor: 'rgba(13, 148, 136, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(13, 148, 136, 1)'
+                    }, {
+                        label: translations.radar_dataset_facebook[lang],
+                        data: [3, 2, 5, 3, 3],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(37, 99, 235, 1)',
+                        pointBackgroundColor: 'rgba(37, 99, 235, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
+                    },
+                    {
+                        label: translations.radar_dataset_zalo[lang],
+                        data: [6, 2, 7, 8, 6],
+                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                        borderColor: 'rgba(147, 51, 234, 1)',
+                        pointBackgroundColor: 'rgba(147, 51, 234, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(147, 51, 234, 1)'
+                    }]
+                };
+            
+                const radarConfig = {
+                    type: 'radar',
+                    data: radarData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        elements: { line: { borderWidth: 3 } },
+                        scales: {
+                            r: {
+                                angleLines: { display: true },
+                                suggestedMin: 0,
+                                suggestedMax: 10,
+                                pointLabels: { font: { size: 12 } },
+                                ticks: { stepSize: 2 }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.r !== null) { label += context.parsed.r + ' / 10'; }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                };
+                radarChartInstance = new Chart(radarCtx, radarConfig);
+            }
+
+            function setLanguage(lang) {
+                document.documentElement.lang = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(element => {
+                    const key = element.getAttribute('data-translate-key');
+                    if (translations[key] && translations[key][lang]) {
+                        element.innerHTML = translations[key][lang];
+                    }
+                });
+
+                document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
+                document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+                createRadarChart(lang);
+            }
+            
+            // Language Buttons
+            document.getElementById('lang-vi').addEventListener('click', () => setLanguage('vi'));
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+            
+            // Initial Load
+            setLanguage('vi');
+
+            // Business Model Toggle
+            const btnPhase1 = document.getElementById('btnPhase1');
+            const btnPhase2 = document.getElementById('btnPhase2');
+            const contentPhase1 = document.getElementById('contentPhase1');
+            const contentPhase2 = document.getElementById('contentPhase2');
+
+            btnPhase1.addEventListener('click', () => {
+                contentPhase1.classList.remove('hidden');
+                contentPhase2.classList.add('hidden');
+                btnPhase1.classList.add('active');
+                btnPhase2.classList.remove('active');
+            });
+
+            btnPhase2.addEventListener('click', () => {
+                contentPhase2.classList.remove('hidden');
+                contentPhase1.classList.add('hidden');
+                btnPhase2.classList.add('active');
+                btnPhase1.classList.remove('active');
+            });
+            
+            // Active Nav Link on Scroll
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 70) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
