@@ -1,64 +1,69 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Đề xuất Dự án "Kèo Thơm"</title>
+    <title>Kèo Thơm - Giao diện Web</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Sand & Teal -->
-    <!-- Application Structure Plan: The application is structured as a single-page dashboard with a sticky navigation bar for thematic exploration (Overview, Market, Product, Plan, Competition). This non-linear structure is chosen over the original report's linear format to allow users to quickly jump to sections of interest. It enhances usability by grouping related information and using interactive visualizations like the radar chart to make complex data, such as competitive analysis, more digestible and engaging. -->
-    <!-- Visualization & Content Choices: 
-        1. Report Info: Competitive Matrix -> Goal: Compare -> Viz/Presentation: Interactive Radar Chart -> Interaction: Hover tooltips for data points -> Justification: A radar chart provides a much more intuitive and immediate multi-variable comparison than a static table, highlighting strengths and weaknesses visually. -> Library/Method: Chart.js/Canvas.
-        2. Report Info: Business Model Phases -> Goal: Inform/Organize -> Viz/Presentation: Interactive Toggle Buttons -> Interaction: Click to show/hide phase details -> Justification: This makes the section interactive and reduces initial information overload, presenting content cleanly. -> Library/Method: Vanilla JS DOM manipulation.
-        3. Report Info: Development Roadmap -> Goal: Show Change/Timeline -> Viz/Presentation: Horizontal Visual Timeline -> Interaction: Static Visual -> Justification: A visual timeline is more engaging and easier to follow chronologically than a simple text list. -> Library/Method: HTML/Tailwind CSS.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #FDFBF5;
-            color: #4A4A4A;
         }
-        .nav-link {
-            transition: all 0.3s;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link.active, .nav-link:hover {
+        .sidebar-link.active {
+            background-color: #F0FDFA;
             color: #14B8A6;
+            font-weight: 600;
+        }
+        .filter-btn.active {
+            background-color: #14B8A6;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+        .gemini-btn {
+            background-color: #f0fdfa;
+            color: #0d9488;
+            border: 1px solid #ccfbf1;
+        }
+        .gemini-btn:hover {
+            background-color: #ccfbf1;
+        }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #14B8A6;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .profile-tab.active {
             border-bottom-color: #14B8A6;
-        }
-        .card {
-            background-color: #FFFFFF;
-            border: 1px solid #F3EFEA;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .section-title {
-            color: #D97706;
-        }
-        .btn-primary {
-            background-color: #14B8A6;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #0F766E;
-        }
-        .btn-secondary {
-            background-color: #F1F5F9;
-            color: #475569;
-            transition: background-color 0.3s;
-        }
-        .btn-secondary.active {
-            background-color: #14B8A6;
-            color: white;
+            color: #14B8A6;
+            font-weight: 600;
         }
         .lang-btn {
             background-color: #e2e8f0;
@@ -67,6 +72,7 @@
             border-radius: 0.5rem;
             font-weight: 600;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
         .lang-btn.active {
             background-color: #14B8A6;
@@ -75,443 +81,1000 @@
         }
     </style>
 </head>
-<body class="antialiased">
-    <div class="absolute top-4 right-4 z-50">
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Language Switcher -->
+    <div class="fixed top-4 right-4 z-[60]">
         <div class="flex space-x-1 bg-gray-200 p-1 rounded-lg">
             <button id="lang-vi" class="lang-btn">VI</button>
             <button id="lang-en" class="lang-btn">EN</button>
         </div>
     </div>
 
-    <header class="text-center py-8 px-4 bg-white border-b border-gray-200">
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-800" data-translate-key="header_title">Dự án "Kèo Thơm"</h1>
-        <p class="mt-2 text-lg text-gray-500" data-translate-key="header_tagline">Kết nối tức thời, Gắn kết cộng đồng.</p>
-    </header>
-
-    <nav class="sticky top-0 bg-white/80 backdrop-blur-md z-40 shadow-sm">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-center items-center h-16 space-x-4 md:space-x-8">
-                <a href="#overview" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_overview">Tổng Quan</a>
-                <a href="#market" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_market">Thị Trường</a>
-                <a href="#product" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_product">Sản Phẩm</a>
-                <a href="#plan" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_plan">Kế Hoạch</a>
-                <a href="#competition" class="nav-link px-2 py-1 text-sm md:text-base font-medium text-gray-600" data-translate-key="nav_competition">Cạnh Tranh</a>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto p-4 md:p-8">
-        
-        <section id="overview" class="py-12 md:py-16">
-            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="overview_title">Tổng Quan Dự Án</h2>
-            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="overview_subtitle">"Kèo Thơm" là ứng dụng di động siêu địa phương, biến mọi khoảnh khắc rảnh rỗi thành cơ hội kết nối thực, giải quyết vấn đề "cô đơn kỹ thuật số" trong cộng đồng sinh viên.</p>
-            
-            <div class="grid md:grid-cols-2 gap-8 items-start">
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-2xl font-semibold mb-4 text-red-600 flex items-center" data-translate-key="problem_title"><span class="text-3xl mr-3">⚠️</span>Vấn Đề</h3>
-                    <ul class="space-y-3 text-gray-700 list-inside">
-                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_1_strong">Sự cô đơn:</strong> <span data-translate-key="problem_1_text">Cảm thấy lạc lõng dù có hàng trăm bạn bè trực tuyến.</span></li>
-                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_2_strong">Khó kết nối ngẫu hứng:</strong> <span data-translate-key="problem_2_text">Lịch trình cố định và các nhóm bạn khép kín cản trở các hoạt động tự phát.</span></li>
-                        <li class="flex items-start"><span class="text-teal-500 mr-2 mt-1">●</span><strong data-translate-key="problem_3_strong">Kênh hiện tại rời rạc:</strong> <span data-translate-key="problem_3_text">Facebook quá nhiễu loạn, Zalo chỉ giới hạn trong nhóm quen biết.</span></li>
-                    </ul>
+    <!-- Auth Screens Container -->
+    <div id="auth-container">
+        <!-- Login Screen -->
+        <div id="login-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center z-50">
+            <div class="w-full max-w-sm p-8 bg-white rounded-2xl shadow-lg">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-extrabold text-teal-600">Kèo Thơm</h1>
+                    <p class="text-sm text-gray-500 mt-1" data-translate-key="login_prompt">Đăng nhập để bắt đầu kết nối!</p>
                 </div>
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-2xl font-semibold mb-4 text-green-600 flex items-center" data-translate-key="solution_title"><span class="text-3xl mr-3">💡</span>Giải Pháp</h3>
-                    <p class="mb-4 text-gray-700" data-translate-key="solution_text">"Kèo Thơm" là nền tảng tập trung vào kết nối xã hội trong thời gian thực, cho phép người dùng đăng và khám phá các "kèo" xung quanh mình một cách nhanh chóng.</p>
-                    <div class="space-y-3">
-                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp1">✓ Tập trung vào sự tức thời.</p>
-                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp2">✓ Siêu địa phương (Hyperlocal).</p>
-                        <p class="font-semibold text-teal-700" data-translate-key="solution_usp3">✓ An toàn và xác thực cộng đồng.</p>
+                <div class="space-y-4">
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_email">Email</label>
+                        <input type="email" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="email@daihoc.edu.vn">
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_password">Mật khẩu</label>
+                        <input type="password" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="••••••••">
                     </div>
                 </div>
+                <div class="mt-4 flex items-center">
+                    <input id="terms-checkbox" type="checkbox" class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
+                    <label for="terms-checkbox" class="ml-2 block text-sm text-gray-700" data-translate-key="login_terms">Tôi đồng ý với <a href="#" class="font-medium text-teal-600 hover:underline">Điều khoản</a> và <a href="#" class="font-medium text-teal-600 hover:underline">Chính sách</a></label>
+                </div>
+                <div class="mt-6">
+                    <button id="login-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed" data-translate-key="login_button" disabled>
+                        Đăng nhập
+                    </button>
+                </div>
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    <p data-translate-key="login_with">hoặc đăng nhập với</p>
+                    <div class="flex justify-center space-x-4 mt-2">
+                        <button class="p-2 border rounded-full hover:bg-gray-100"><svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.75 8.36,4.73 12.19,4.73C14.03,4.73 15.1,5.5 15.71,6.09L17.9,3.9C16.21,2.56 14.2,2 12.19,2C6.42,2 2.03,6.8 2.03,12C2.03,17.2 6.42,22 12.19,22C17.6,22 21.7,18.35 21.7,12.38C21.7,11.63 21.55,11.37 21.35,11.1Z"></path></svg></button>
+                        <button class="p-2 border rounded-full hover:bg-gray-100"><svg class="w-5 h-5 text-blue-600" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.32 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"></path></svg></button>
+                    </div>
+                </div>
+                 <div class="mt-6 text-center text-sm">
+                    <p class="text-gray-500" data-translate-key="login_signup_prompt">Chưa có tài khoản? <a href="#" id="signup-link" class="font-medium text-teal-600 hover:underline" data-translate-key="login_signup_link">Đăng ký ngay</a></p>
+                </div>
             </div>
-        </section>
+        </div>
 
-        <section id="market" class="py-12 md:py-16">
-            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="market_title">Thị Trường & Tiềm Năng</h2>
-            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="market_subtitle">Với văn hóa "tụ tập", tỷ lệ dùng smartphone cao và khoảng trống trên thị trường, Việt Nam là mảnh đất màu mỡ cho sự phát triển của "Kèo Thơm".</p>
+        <!-- Signup Screen -->
+        <div id="signup-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 hidden">
+            <div class="w-full max-w-sm p-8 bg-white rounded-2xl shadow-lg">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-extrabold text-teal-600" data-translate-key="signup_title">Tạo tài khoản</h1>
+                    <p class="text-sm text-gray-500 mt-1" data-translate-key="signup_subtitle">Tham gia cộng đồng Kèo Thơm!</p>
+                </div>
+                <div class="space-y-4">
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_name">Họ và Tên</label>
+                        <input type="text" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="Nguyễn Văn A">
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_email">Email</label>
+                        <input type="email" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="email@daihoc.edu.vn">
+                    </div>
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_password">Mật khẩu</label>
+                        <input type="password" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="••••••••">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <button id="signup-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700" data-translate-key="signup_button">
+                        Đăng ký
+                    </button>
+                </div>
+                <div class="mt-6 text-center text-sm">
+                    <p class="text-gray-500" data-translate-key="signup_login_prompt">Đã có tài khoản? <a href="#" id="back-to-login-link" class="font-medium text-teal-600 hover:underline" data-translate-key="signup_login_link">Đăng nhập</a></p>
+                </div>
+            </div>
+        </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-xl font-bold mb-4" data-translate-key="target_market_title">Thị Trường Mục Tiêu</h3>
-                    <div class="mb-4">
-                        <h4 class="font-semibold text-teal-600" data-translate-key="target_market_phase1_title">Giai đoạn 1:</h4>
-                        <p class="text-gray-700" data-translate-key="target_market_phase1_text">Sinh viên năm 1-2 tại các trường đại học lớn ở Hà Nội. Đây là nhóm năng động, cởi mở và có nhu cầu kết nối cao nhất.</p>
+        <!-- Verification Screen -->
+        <div id="verification-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center z-50 hidden">
+            <div class="w-full max-w-sm p-8 bg-white rounded-2xl shadow-lg text-center">
+                <h1 class="text-2xl font-bold text-teal-600" data-translate-key="verify_title">Xác minh danh tính</h1>
+                <p class="text-sm text-gray-500 mt-2 mb-6" data-translate-key="verify_subtitle">Để đảm bảo an toàn, vui lòng tải lên ảnh mặt trước CCCD của bạn.</p>
+                <div class="mt-6">
+                    <label for="cccd-upload" class="cursor-pointer bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-10 flex flex-col items-center justify-center hover:bg-gray-200">
+                        <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <p id="upload-text" class="mt-2 text-sm text-gray-600" data-translate-key="verify_front">Nhấn để tải ảnh lên</p>
+                    </label>
+                    <input id="cccd-upload" type="file" class="hidden" accept="image/*">
+                </div>
+                <div class="mt-6">
+                    <button id="submit-verification-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed" data-translate-key="verify_button" disabled>
+                        Hoàn tất & Bắt đầu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main App Wrapper -->
+    <div id="main-app" class="flex h-screen overflow-hidden hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex flex-col">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h1 class="text-3xl font-extrabold text-teal-600">Kèo Thơm</h1>
+                <p class="text-xs text-gray-500" data-translate-key="tagline">Kết nối tức thời, Gắn kết cộng đồng.</p>
+            </div>
+            <nav class="flex-1 px-4 py-4 space-y-2">
+                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg active">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span data-translate-key="nav_home">Trang chủ</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <span data-translate-key="nav_my_keos">Kèo của tôi</span>
+                </a>
+                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
+                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span data-translate-key="nav_notifications">Thông báo</span>
+                </a>
+            </nav>
+            <div class="px-6 py-4 border-t border-gray-200">
+                <button id="create-keo-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    <span data-translate-key="create_keo_button">Tạo Kèo Mới</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                <div class="relative w-full max-w-md">
+                    <input type="text" class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-teal-500" data-translate-key="search_placeholder" placeholder="Tìm kiếm kèo...">
+                    <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <div id="profile-btn" class="flex items-center space-x-4 cursor-pointer">
+                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/A7F3D0/134E4A?text=MA" alt="User avatar">
+                    <span class="font-semibold">Minh Anh</span> <!-- Placeholder, will be updated -->
+                </div>
+            </header>
+            
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Kèo Feed -->
+                <section class="flex-1 overflow-y-auto p-6">
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="feed_title">Kèo Nổi Bật Quanh Đây</h2>
+                        <div id="filters" class="flex flex-wrap gap-2">
+                            <button class="filter-btn active px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="all" data-translate-key="filter_all">Tất cả</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Ăn uống" data-translate-key="filter_eating">🍔 Ăn uống</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Thể thao" data-translate-key="filter_sports">⚽️ Thể thao</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Học tập" data-translate-key="filter_study">📚 Học tập</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Giải trí" data-translate-key="filter_fun">🎬 Giải trí</button>
+                        </div>
+                    </div>
+                    <div id="keo-feed" class="space-y-4">
+                        <!-- Kèo cards dynamically generated -->
+                    </div>
+                </section>
+                
+                <!-- Map & Details -->
+                <aside class="w-1/3 bg-white border-l border-gray-200 p-6 flex-col hidden lg:flex">
+                     <h3 class="text-xl font-bold mb-4" data-translate-key="map_title">Bản đồ Kèo</h3>
+                     <div class="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-6 border">
+                        <div id="map"></div>
+                     </div>
+                     <div id="keo-details" class="flex-1 overflow-y-auto">
+                        <div class="text-center text-gray-500 pt-10">
+                            <p class="text-lg font-semibold" data-translate-key="details_prompt_title">Chọn một kèo để xem chi tiết</p>
+                            <p class="text-sm" data-translate-key="details_prompt_subtitle">Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.</p>
+                        </div>
+                     </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modals-container">
+        <!-- Create Keo Modal -->
+        <div id="create-keo-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-40">
+            <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-lg">
+                <h2 class="text-2xl font-bold mb-6" data-translate-key="modal_create_title">Tạo Kèo Mới</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="modal_create_content">Nội dung kèo</label>
+                        <div class="flex items-center space-x-2">
+                            <input id="keo-title-input" type="text" class="flex-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" placeholder="VD: Tìm người ăn trưa bún đậu...">
+                            <button id="gemini-title-btn" class="gemini-btn font-semibold py-2 px-3 rounded-md flex items-center space-x-2 text-sm">
+                                <span data-translate-key="modal_create_suggest">✨ Gợi ý</span>
+                                <div id="title-loader" class="loader hidden"></div>
+                            </button>
+                        </div>
+                        <div id="title-suggestions" class="mt-2 space-y-1"></div>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-teal-600" data-translate-key="target_market_phase2_title">Giai đoạn 2:</h4>
-                        <p class="text-gray-700" data-translate-key="target_market_phase2_text">Mở rộng ra toàn bộ sinh viên, học sinh cấp 3, và nhân viên văn phòng trên cả nước.</p>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="modal_create_category">Loại kèo</label>
+                        <select id="keo-category-input" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option data-translate-key="category_eating">Ăn uống</option> 
+                            <option data-translate-key="category_sports">Thể thao</option> 
+                            <option data-translate-key="category_study">Học tập</option> 
+                            <option data-translate-key="category_fun">Giải trí</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="modal_create_location">Địa điểm</label>
+                        <input id="keo-location-input" type="text" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" placeholder="VD: Quán Cây Bàng, Chùa Láng">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="modal_create_max_participants">Số người tối đa (gồm bạn)</label>
+                        <input id="keo-max-input" type="number" min="2" value="5" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                 </div>
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-xl font-bold mb-4" data-translate-key="potential_title">Tiềm Năng Vượt Trội</h3>
-                     <ul class="space-y-2 text-gray-700 list-inside">
-                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_1">Văn hóa "tụ tập" đặc trưng của giới trẻ Việt.</span></li>
-                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_2">Tỷ lệ sử dụng smartphone và Internet rất cao.</span></li>
-                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_3">Nhu cầu kết nối trực tiếp tăng mạnh hậu giãn cách.</span></li>
-                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-1">★</span><span data-translate-key="potential_4">Khoảng trống thị trường cho ứng dụng kết nối tức thời.</span></li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="product" class="py-12 md:py-16">
-            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="product_title">Sản Phẩm & Mô Hình Kinh Doanh</h2>
-            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="product_subtitle">Sản phẩm MVP (Tối thiểu khả dụng) tập trung vào các tính năng cốt lõi, đi kèm với một mô hình kinh doanh theo giai đoạn linh hoạt.</p>
-            
-            <div class="grid lg:grid-cols-2 gap-8">
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-xl font-bold mb-4" data-translate-key="features_title">Tính Năng Chính (Phiên bản MVP)</h3>
-                    <ul class="grid grid-cols-2 gap-4 text-gray-700">
-                        <li class="flex items-center" data-translate-key="feature_1"><span class="text-2xl mr-2">✅</span>Đăng ký/Đăng nhập</li>
-                        <li class="flex items-center" data-translate-key="feature_2"><span class="text-2xl mr-2">📝</span>Tạo Kèo đơn giản</li>
-                        <li class="flex items-center" data-translate-key="feature_3"><span class="text-2xl mr-2">🗺️</span>Xem Kèo xung quanh</li>
-                        <li class="flex items-center" data-translate-key="feature_4"><span class="text-2xl mr-2">👍</span>Tham gia Kèo</li>
-                        <li class="flex items-center" data-translate-key="feature_5"><span class="text-2xl mr-2">💬</span>Chat Nhóm tạm thời</li>
-                        <li class="flex items-center" data-translate-key="feature_6"><span class="text-2xl mr-2">🛡️</span>Xác thực & Điều khoản</li>
-                    </ul>
-                </div>
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-xl font-bold mb-4" data-translate-key="bizmodel_title">Mô Hình Kinh Doanh</h3>
-                    <div class="flex space-x-2 mb-4">
-                        <button id="btnPhase1" class="btn-secondary active px-4 py-2 rounded-lg font-semibold w-full" data-translate-key="bizmodel_btn1">Giai đoạn 1: Tăng trưởng</button>
-                        <button id="btnPhase2" class="btn-secondary px-4 py-2 rounded-lg font-semibold w-full" data-translate-key="bizmodel_btn2">Giai đoạn 2: Doanh thu</button>
-                    </div>
-                    <div id="contentPhase1">
-                        <p class="text-sm font-semibold text-gray-500 mb-2" data-translate-key="bizmodel_phase1_subtitle">0-6 tháng</p>
-                        <p class="text-gray-700" data-translate-key="bizmodel_phase1_text">Tập trung tăng trưởng người dùng, ứng dụng **hoàn toàn miễn phí**. Mục tiêu duy nhất là thu hút lượng người dùng đủ lớn để nền tảng trở nên hữu ích.</p>
-                    </div>
-                    <div id="contentPhase2" class="hidden">
-                        <p class="text-sm font-semibold text-gray-500 mb-2" data-translate-key="bizmodel_phase2_subtitle">Sau 6 tháng</p>
-                        <ul class="space-y-2 text-gray-700">
-                            <li data-translate-key="bizmodel_phase2_item1"><strong>Kèo Tài Trợ (B2B):</strong> Các cửa hàng, quán cà phê trả phí để tạo "kèo" nổi bật kèm ưu đãi.</li>
-                            <li data-translate-key="bizmodel_phase2_item2"><strong>Tính năng Premium (Freemium):</strong> Tính năng nâng cao trả phí cho người dùng (bộ lọc, kèo ẩn danh...).</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="plan" class="py-12 md:py-16">
-            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="plan_title">Kế Hoạch Hành Động</h2>
-            <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="plan_subtitle">Từ việc hoàn thiện kế hoạch đến ra mắt chính thức và mở rộng, lộ trình được vạch ra rõ ràng theo từng quý.</p>
-
-            <div class="relative w-full">
-                <div class="border-l-4 border-teal-200 absolute h-full top-0 left-1/2 -translate-x-1/2"></div>
-                <div class="grid grid-cols-1 gap-8">
-                    <div class="flex justify-center items-center w-full">
-                        <div class="w-1/2 flex justify-end">
-                            <div class="text-right pr-8">
-                                <p class="font-bold text-teal-700" data-translate-key="roadmap_q4_2025_title">Quý 4/2025</p>
-                                <p class="text-sm text-gray-600" data-translate-key="roadmap_q4_2025_text">Hoàn thiện kế hoạch, lập team, thiết kế Wireframe & Prototype.</p>
-                            </div>
-                        </div>
-                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">1</div>
-                        <div class="w-1/2"></div>
-                    </div>
-                    <div class="flex justify-center items-center w-full">
-                        <div class="w-1/2"></div>
-                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">2</div>
-                        <div class="w-1/2 pl-8">
-                            <p class="font-bold text-teal-700" data-translate-key="roadmap_q12_2026_title">Quý 1-2/2026</p>
-                            <p class="text-sm text-gray-600" data-translate-key="roadmap_q12_2026_text">Phát triển và hoàn thiện phiên bản MVP. Tiến hành Alpha & Beta Test.</p>
-                        </div>
-                    </div>
-                    <div class="flex justify-center items-center w-full">
-                        <div class="w-1/2 flex justify-end">
-                            <div class="text-right pr-8">
-                                <p class="font-bold text-teal-700" data-translate-key="roadmap_q3_2026_title">Quý 3/2026</p>
-                                <p class="text-sm text-gray-600" data-translate-key="roadmap_q3_2026_text">Ra mắt chính thức tại 1-2 trường đại học mục tiêu. Triển khai Go-to-Market.</p>
-                            </div>
-                        </div>
-                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">3</div>
-                        <div class="w-1/2"></div>
-                    </div>
-                    <div class="flex justify-center items-center w-full">
-                        <div class="w-1/2"></div>
-                        <div class="w-12 h-12 rounded-full bg-teal-500 border-4 border-white shadow flex items-center justify-center text-white font-bold z-10">4</div>
-                        <div class="w-1/2 pl-8">
-                             <p class="font-bold text-teal-700" data-translate-key="roadmap_q4_2026_title">Quý 4/2026+</p>
-                            <p class="text-sm text-gray-600" data-translate-key="roadmap_q4_2026_text">Phân tích dữ liệu, cải tiến sản phẩm và lên kế hoạch mở rộng.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="competition" class="py-12 md:py-16">
-            <h2 class="text-3xl font-bold text-center mb-2 section-title" data-translate-key="competition_title">Phân Tích Cạnh Tranh</h2>
-             <p class="text-center max-w-3xl mx-auto text-gray-600 mb-12" data-translate-key="competition_subtitle">"Kèo Thơm" chiếm lĩnh một thị trường ngách độc đáo, vượt trội so với các giải pháp gián tiếp nhờ "Sức mạnh của sự tập trung".</p>
-            <div class="grid lg:grid-cols-2 gap-8 items-center">
-                <div class="card p-6 rounded-xl">
-                    <div class="chart-container w-full max-w-lg mx-auto h-80 md:h-96">
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                </div>
-                <div class="card p-6 rounded-xl">
-                    <h3 class="text-xl font-bold mb-4" data-translate-key="moat_title">"Con Hào" Của Chúng Tôi</h3>
-                    <p class="text-gray-700" data-translate-key="moat_text1">
-                        Điều gì ngăn cản Facebook thêm một tính năng "Hẹn kèo"? Câu trả lời nằm ở lợi thế cạnh tranh bền vững của chúng tôi: **sự tập trung**.
-                    </p>
-                    <p class="mt-4 text-gray-700" data-translate-key="moat_text2">
-                        Các nền tảng lớn được thiết kế để làm mọi thứ, dẫn đến trải nghiệm nhiễu loạn. Ngược lại, "Kèo Thơm" chỉ làm một việc duy nhất và làm nó tốt nhất: tạo ra các kết nối ngẫu hứng. Chúng tôi mang lại một trải nghiệm người dùng **mượt mà, nhanh chóng và không bị làm phiền**, điều mà các nền tảng đa năng không thể sao chép.
-                    </p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-white border-t border-gray-200 mt-16">
-        <div class="container mx-auto px-8 py-12">
-            <div class="text-center">
-                <h2 class="text-2xl font-bold text-gray-800" data-translate-key="cta_title">Kêu Gọi Hành Động</h2>
-                <p class="mt-4 max-w-2xl mx-auto text-gray-600" data-translate-key="cta_subtitle">Dự án "Kèo Thơm" đang ở giai đoạn đầu và đầy tiềm năng. Chúng tôi đang tích cực tìm kiếm:</p>
-                <div class="mt-8 grid md:grid-cols-3 gap-8">
-                    <div class="card p-6 rounded-xl">
-                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_cofounders_title">Đồng sáng lập</h3>
-                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_cofounders_text">Những người có cùng đam mê, đặc biệt trong lĩnh vực Lập trình và Thiết kế.</p>
-                    </div>
-                     <div class="card p-6 rounded-xl">
-                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_mentors_title">Cố vấn</h3>
-                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_mentors_text">Sự mentorship từ các chuyên gia trong lĩnh vực phát triển sản phẩm công nghệ và khởi nghiệp.</p>
-                    </div>
-                     <div class="card p-6 rounded-xl">
-                        <h3 class="font-bold text-lg text-teal-600" data-translate-key="cta_partners_title">Đối tác</h3>
-                        <p class="text-sm text-gray-600 mt-2" data-translate-key="cta_partners_text">Các Câu lạc bộ sinh viên để hợp tác triển khai và quảng bá ứng dụng trong giai đoạn ra mắt.</p>
-                    </div>
-                </div>
-                 <div class="mt-10">
-                    <a href="#" class="btn-primary px-8 py-3 rounded-lg font-semibold inline-block" data-translate-key="cta_button">Liên Hệ Với Chúng Tôi</a>
+                <div class="mt-8 flex justify-end space-x-3">
+                    <button class="close-modal-btn bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300" data-translate-key="modal_cancel">Hủy</button>
+                    <button id="publish-keo-btn" class="bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700" data-translate-key="modal_create_publish">Đăng Kèo</button>
                 </div>
             </div>
         </div>
-    </footer>
+        <!-- Profile Modal -->
+        <div id="profile-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden z-40">
+            <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl">
+                 <button class="close-modal-btn absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div class="flex items-center space-x-6 mb-6">
+                    <img id="profile-modal-avatar" class="w-24 h-24 rounded-full border-4 border-teal-500" src="https://placehold.co/100x100/A7F3D0/134E4A?text=MA" alt="User avatar">
+                    <div>
+                        <h2 id="profile-modal-name" class="text-3xl font-bold">Minh Anh</h2>
+                        <p id="profile-modal-university" class="text-gray-500" data-translate-key="profile_university">Sinh viên - Đại học Quốc gia Hà Nội</p>
+                        <div id="profile-modal-tags" class="flex flex-wrap gap-2 mt-3">
+                            <span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-1 rounded-full">#Badminton</span>
+                            <span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-1 rounded-full">#CoffeeLover</span>
+                            <span class="text-xs font-semibold bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">#Photography</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                        <button class="profile-tab active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="created" data-translate-key="profile_tab_created">Kèo đã tạo</button>
+                        <button class="profile-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="joined" data-translate-key="profile_tab_joined">Kèo đã tham gia</button>
+                    </nav>
+                </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const translations = {
-                page_title: { vi: 'Đề xuất Dự án "Kèo Thơm"', en: '"Kèo Thơm" Project Proposal' },
-                header_title: { vi: 'Dự án "Kèo Thơm"', en: '"Kèo Thơm" Project' },
-                header_tagline: { vi: 'Kết nối tức thời, Gắn kết cộng đồng.', en: 'Spontaneous Connections, Stronger Communities.' },
-                nav_overview: { vi: 'Tổng Quan', en: 'Overview' },
-                nav_market: { vi: 'Thị Trường', en: 'Market' },
-                nav_product: { vi: 'Sản Phẩm', en: 'Product' },
-                nav_plan: { vi: 'Kế Hoạch', en: 'Plan' },
-                nav_competition: { vi: 'Cạnh Tranh', en: 'Competition' },
-                overview_title: { vi: 'Tổng Quan Dự Án', en: 'Project Overview' },
-                overview_subtitle: { vi: '"Kèo Thơm" là ứng dụng di động siêu địa phương, biến mọi khoảnh khắc rảnh rỗi thành cơ hội kết nối thực, giải quyết vấn đề "cô đơn kỹ thuật số" trong cộng đồng sinh viên.', en: '"Kèo Thơm" is a hyperlocal mobile app that turns every spare moment into a real connection opportunity, solving the "digital loneliness" issue among students.' },
-                problem_title: { vi: 'Vấn Đề', en: 'The Problem' },
-                problem_1_strong: { vi: 'Sự cô đơn:', en: 'Loneliness:' },
-                problem_1_text: { vi: 'Cảm thấy lạc lõng dù có hàng trăm bạn bè trực tuyến.', en: 'Feeling isolated despite having hundreds of online friends.' },
-                problem_2_strong: { vi: 'Khó kết nối ngẫu hứng:', en: 'Difficulty in spontaneous connection:' },
-                problem_2_text: { vi: 'Lịch trình cố định và các nhóm bạn khép kín cản trở các hoạt động tự phát.', en: 'Fixed schedules and closed friend groups hinder spontaneous activities.' },
-                problem_3_strong: { vi: 'Kênh hiện tại rời rạc:', en: 'Fragmented channels:' },
-                problem_3_text: { vi: 'Facebook quá nhiễu loạn, Zalo chỉ giới hạn trong nhóm quen biết.', en: 'Facebook is too noisy, Zalo is limited to existing acquaintances.' },
-                solution_title: { vi: 'Giải Pháp', en: 'The Solution' },
-                solution_text: { vi: '"Kèo Thơm" là nền tảng tập trung vào kết nối xã hội trong thời gian thực, cho phép người dùng đăng và khám phá các "kèo" xung quanh mình một cách nhanh chóng.', en: '"Kèo Thơm" is a platform focused on real-time social connections, allowing users to quickly post and discover "kèos" around them.' },
-                solution_usp1: { vi: '✓ Tập trung vào sự tức thời.', en: '✓ Focus on Immediacy.' },
-                solution_usp2: { vi: '✓ Siêu địa phương (Hyperlocal).', en: '✓ Hyperlocal Focus.' },
-                solution_usp3: { vi: '✓ An toàn và xác thực cộng đồng.', en: '✓ Safe & Authenticated Community.' },
-                market_title: { vi: 'Thị Trường & Tiềm Năng', en: 'Market & Potential' },
-                market_subtitle: { vi: 'Với văn hóa "tụ tập", tỷ lệ dùng smartphone cao và khoảng trống trên thị trường, Việt Nam là mảnh đất màu mỡ cho sự phát triển của "Kèo Thơm".', en: 'With its "get-together" culture, high smartphone penetration, and a market gap, Vietnam is a fertile ground for "Kèo Thơm".' },
-                target_market_title: { vi: 'Thị Trường Mục Tiêu', en: 'Target Market' },
-                target_market_phase1_title: { vi: 'Giai đoạn 1:', en: 'Phase 1:' },
-                target_market_phase1_text: { vi: 'Sinh viên năm 1-2 tại các trường đại học lớn ở Hà Nội. Đây là nhóm năng động, cởi mở và có nhu cầu kết nối cao nhất.', en: '1st-2nd year students at major universities in Hanoi. This group is dynamic, open-minded, and has the highest need for connection.' },
-                target_market_phase2_title: { vi: 'Giai đoạn 2:', en: 'Phase 2:' },
-                target_market_phase2_text: { vi: 'Mở rộng ra toàn bộ sinh viên, học sinh cấp 3, và nhân viên văn phòng trên cả nước.', en: 'Expand to all university/high school students, and office workers nationwide.' },
-                potential_title: { vi: 'Tiềm Năng Vượt Trội', en: 'Outstanding Potential' },
-                potential_1: { vi: 'Văn hóa "tụ tập" đặc trưng của giới trẻ Việt.', en: 'The unique "get-together" culture of Vietnamese youth.' },
-                potential_2: { vi: 'Tỷ lệ sử dụng smartphone và Internet rất cao.', en: 'Very high smartphone and Internet penetration rate.' },
-                potential_3: { vi: 'Nhu cầu kết nối trực tiếp tăng mạnh hậu giãn cách.', en: 'Strong demand for face-to-face connection post-social distancing.' },
-                potential_4: { vi: 'Khoảng trống thị trường cho ứng dụng kết nối tức thời.', en: 'A market gap for an instant connection application.' },
-                product_title: { vi: 'Sản Phẩm & Mô Hình Kinh Doanh', en: 'Product & Business Model' },
-                product_subtitle: { vi: 'Sản phẩm MVP (Tối thiểu khả dụng) tập trung vào các tính năng cốt lõi, đi kèm với một mô hình kinh doanh theo giai đoạn linh hoạt.', en: 'The MVP (Minimum Viable Product) focuses on core features, paired with a flexible, phased business model.' },
-                features_title: { vi: 'Tính Năng Chính (Phiên bản MVP)', en: 'Core Features (MVP Version)' },
-                feature_1: { vi: '<span class="text-2xl mr-2">✅</span>Đăng ký/Đăng nhập', en: '<span class="text-2xl mr-2">✅</span>Sign-up/Login' },
-                feature_2: { vi: '<span class="text-2xl mr-2">📝</span>Tạo Kèo đơn giản', en: '<span class="text-2xl mr-2">📝</span>Simple "Kèo" Creation' },
-                feature_3: { vi: '<span class="text-2xl mr-2">🗺️</span>Xem Kèo xung quanh', en: '<span class="text-2xl mr-2">🗺️</span>Browse Nearby "Kèos"' },
-                feature_4: { vi: '<span class="text-2xl mr-2">👍</span>Tham gia Kèo', en: '<span class="text-2xl mr-2">👍</span>Join "Kèo"' },
-                feature_5: { vi: '<span class="text-2xl mr-2">💬</span>Chat Nhóm tạm thời', en: '<span class="text-2xl mr-2">💬</span>Temporary Group Chat' },
-                feature_6: { vi: '<span class="text-2xl mr-2">🛡️</span>Xác thực & Điều khoản', en: '<span class="text-2xl mr-2">🛡️</span>Verification & Terms' },
-                bizmodel_title: { vi: 'Mô Hình Kinh Doanh', en: 'Business Model' },
-                bizmodel_btn1: { vi: 'Giai đoạn 1: Tăng trưởng', en: 'Phase 1: Growth' },
-                bizmodel_btn2: { vi: 'Giai đoạn 2: Doanh thu', en: 'Phase 2: Monetization' },
-                bizmodel_phase1_subtitle: { vi: '0-6 tháng', en: '0-6 Months' },
-                bizmodel_phase1_text: { vi: 'Tập trung tăng trưởng người dùng, ứng dụng **hoàn toàn miễn phí**. Mục tiêu duy nhất là thu hút lượng người dùng đủ lớn để nền tảng trở nên hữu ích.', en: 'Focus on user growth, the app is **completely free**. The sole objective is to attract a critical mass of users to make the platform useful.' },
-                bizmodel_phase2_subtitle: { vi: 'Sau 6 tháng', en: 'After 6 Months' },
-                bizmodel_phase2_item1: { vi: '<strong>Kèo Tài Trợ (B2B):</strong> Các cửa hàng, quán cà phê trả phí để tạo "kèo" nổi bật kèm ưu đãi.', en: '<strong>Sponsored "Kèos" (B2B):</strong> Cafes and shops pay to create featured "kèos" with special offers.' },
-                bizmodel_phase2_item2: { vi: '<strong>Tính năng Premium (Freemium):</strong> Tính năng nâng cao trả phí cho người dùng (bộ lọc, kèo ẩn danh...).', en: '<strong>Premium Features (Freemium):</strong> Paid advanced features for users (filters, anonymous mode...).' },
-                plan_title: { vi: 'Kế Hoạch Hành Động', en: 'Action Plan' },
-                plan_subtitle: { vi: 'Từ việc hoàn thiện kế hoạch đến ra mắt chính thức và mở rộng, lộ trình được vạch ra rõ ràng theo từng quý.', en: 'From planning to official launch and expansion, the roadmap is clearly defined quarterly.' },
-                roadmap_q4_2025_title: { vi: 'Quý 4/2025', en: 'Q4/2025' },
-                roadmap_q4_2025_text: { vi: 'Hoàn thiện kế hoạch, lập team, thiết kế Wireframe & Prototype.', en: 'Finalize plan, assemble team, design Wireframe & Prototype.' },
-                roadmap_q12_2026_title: { vi: 'Quý 1-2/2026', en: 'Q1-2/2026' },
-                roadmap_q12_2026_text: { vi: 'Phát triển và hoàn thiện phiên bản MVP. Tiến hành Alpha & Beta Test.', en: 'Develop and finalize MVP. Conduct Alpha & Beta Tests.' },
-                roadmap_q3_2026_title: { vi: 'Quý 3/2026', en: 'Q3/2026' },
-                roadmap_q3_2026_text: { vi: 'Ra mắt chính thức tại 1-2 trường đại học mục tiêu. Triển khai Go-to-Market.', en: 'Official launch at 1-2 target universities. Deploy Go-to-Market strategy.' },
-                roadmap_q4_2026_title: { vi: 'Quý 4/2026+', en: 'Q4/2026+' },
-                roadmap_q4_2026_text: { vi: 'Phân tích dữ liệu, cải tiến sản phẩm và lên kế hoạch mở rộng.', en: 'Analyze data, improve the product, and plan for expansion.' },
-                competition_title: { vi: 'Phân Tích Cạnh Tranh', en: 'Competitive Analysis' },
-                competition_subtitle: { vi: '"Kèo Thơm" chiếm lĩnh một thị trường ngách độc đáo, vượt trội so với các giải pháp gián tiếp nhờ "Sức mạnh của sự tập trung".', en: '"Kèo Thơm" occupies a unique niche, outperforming indirect solutions with "The Power of Focus".' },
-                moat_title: { vi: '"Con Hào" Của Chúng Tôi', en: 'Our Moat' },
-                moat_text1: { vi: 'Điều gì ngăn cản Facebook thêm một tính năng "Hẹn kèo"? Câu trả lời nằm ở lợi thế cạnh tranh bền vững của chúng tôi: **sự tập trung**.', en: 'What stops Facebook from adding a "hangout" feature? The answer lies in our sustainable competitive advantage: **focus**.' },
-                moat_text2: { vi: 'Các nền tảng lớn được thiết kế để làm mọi thứ, dẫn đến trải nghiệm nhiễu loạn. Ngược lại, "Kèo Thơm" chỉ làm một việc duy nhất và làm nó tốt nhất: tạo ra các kết nối ngẫu hứng. Chúng tôi mang lại một trải nghiệm người dùng **mượt mà, nhanh chóng và không bị làm phiền**, điều mà các nền tảng đa năng không thể sao chép.', en: 'Large platforms are designed to do everything, leading to a cluttered experience. In contrast, "Kèo Thơm" does one thing best: facilitating spontaneous connections. We deliver a **seamless, fast, and distraction-free** user experience that versatile platforms cannot replicate.' },
-                cta_title: { vi: 'Kêu Gọi Hành Động', en: 'Call to Action' },
-                cta_subtitle: { vi: 'Dự án "Kèo Thơm" đang ở giai đoạn đầu và đầy tiềm năng. Chúng tôi đang tích cực tìm kiếm:', en: 'The "Kèo Thơm" project is in its early, high-potential stage. We are actively looking for:' },
-                cta_cofounders_title: { vi: 'Đồng sáng lập', en: 'Co-founders' },
-                cta_cofounders_text: { vi: 'Những người có cùng đam mê, đặc biệt trong lĩnh vực Lập trình và Thiết kế.', en: 'Passionate individuals, especially in Programming and Design.' },
-                cta_mentors_title: { vi: 'Cố vấn', en: 'Mentors' },
-                cta_mentors_text: { vi: 'Sự mentorship từ các chuyên gia trong lĩnh vực phát triển sản phẩm công nghệ và khởi nghiệp.', en: 'Mentorship from experts in tech product development and entrepreneurship.' },
-                cta_partners_title: { vi: 'Đối tác', en: 'Partners' },
-                cta_partners_text: { vi: 'Các Câu lạc bộ sinh viên để hợp tác triển khai và quảng bá ứng dụng trong giai đoạn ra mắt.', en: 'Student clubs to collaborate on the launch and promotion of the app.' },
-                cta_button: { vi: 'Liên Hệ Với Chúng Tôi', en: 'Contact Us' },
-                radar_labels: {
-                    vi: ['Tính tức thời', 'Mức độ địa phương', 'Mục đích sử dụng', 'Mức độ an toàn', 'Trải nghiệm người dùng'],
-                    en: ['Immediacy', 'Hyperlocal Focus', 'Primary Purpose', 'Safety Level', 'User Experience']
-                },
-                radar_dataset_keothom: { vi: 'Kèo Thơm', en: 'Kèo Thơm' },
-                radar_dataset_facebook: { vi: 'Facebook Groups', en: 'Facebook Groups' },
-                radar_dataset_zalo: { vi: 'Zalo/Messenger', en: 'Zalo/Messenger' }
-            };
+                <div id="tab-content-created" class="py-4 max-h-60 overflow-y-auto">
+                   <p class="text-gray-500 text-center" data-translate-key="profile_no_created">Chưa có hoạt động nào.</p>
+                   <!-- Created Keos will be listed here -->
+                </div>
+                 <div id="tab-content-joined" class="py-4 max-h-60 overflow-y-auto hidden">
+                   <p class="text-gray-500 text-center" data-translate-key="profile_no_joined">Bạn chưa tham gia kèo nào.</p>
+                   <!-- Joined Keos will be listed here -->
+                </div>
 
-            let radarChartInstance = null;
-            const radarCtx = document.getElementById('radarChart').getContext('2d');
+                <div class="mt-6 flex justify-end">
+                    <button id="logout-btn" class="text-sm text-red-600 font-semibold hover:underline" data-translate-key="profile_logout">Đăng xuất</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            function createRadarChart(lang) {
-                if (radarChartInstance) {
-                    radarChartInstance.destroy();
-                }
+<script>
+    // --- Data ---
+    let DUMMY_KEOS = [
+      { id: '1', category: 'Ăn uống', title: 'Tìm người ăn trưa bún đậu Cây Bàng', location: '1km - Cây Bàng, Chùa Láng', time: 'Còn 30 phút', participants: ['An', 'Minh', 'Hoa'], maxParticipants: 4, avatar: '🍔', lat: 21.025, lng: 105.800, creator: 'An'},
+      { id: '2', category: 'Thể thao', title: 'Lập team đá bóng sân Cầu Giấy', location: '2.5km - Sân bóng Cầu Giấy', time: 'Bắt đầu lúc 17:00', participants: ['Hùng', 'Sơn', 'Đức', 'Kiên', 'Long'], maxParticipants: 7, avatar: '⚽️', lat: 21.030, lng: 105.790, creator: 'Hùng'},
+      { id: '3', category: 'Học tập', title: 'Tìm bạn học nhóm môn Triết', location: '500m - Thư viện Tạ Quang Bửu', time: 'Bây giờ', participants: ['Linh'], maxParticipants: 3, avatar: '📚', lat: 21.006, lng: 105.843, creator: 'Linh'},
+      { id: '4', category: 'Giải trí', title: 'Tìm 2 người xem phim Oppenheimer suất 8h', location: '3km - CGV Vincom NCT', time: 'Còn 2 giờ', participants: ['Mai', 'Tú'], maxParticipants: 4, avatar: '🎬', lat: 21.018, lng: 105.810, creator: 'Mai'},
+      { id: '5', category: 'Ăn uống', title: 'Đi uống trà chanh Nhà Thờ', location: '4km - Phố Nhà Thờ', time: 'Tối nay 8h', participants: ['Quang', 'Trang'], maxParticipants: 5, avatar: '🍋', lat: 21.028, lng: 105.850, creator: 'Quang'},
+    ];
+    
+    // --- User State ---
+    let currentUser = { name: 'Minh Anh', university: 'Đại học Quốc gia Hà Nội', avatarInitial: 'MA' }; // Default user
+    let userCreatedKeos = [];
+    let userJoinedKeos = [];
 
-                const radarData = {
-                    labels: translations.radar_labels[lang],
-                    datasets: [{
-                        label: translations.radar_dataset_keothom[lang],
-                        data: [9, 10, 9, 8, 9],
-                        backgroundColor: 'rgba(20, 184, 166, 0.2)',
-                        borderColor: 'rgba(13, 148, 136, 1)',
-                        pointBackgroundColor: 'rgba(13, 148, 136, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(13, 148, 136, 1)'
-                    }, {
-                        label: translations.radar_dataset_facebook[lang],
-                        data: [3, 2, 5, 3, 3],
-                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: 'rgba(37, 99, 235, 1)',
-                        pointBackgroundColor: 'rgba(37, 99, 235, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(37, 99, 235, 1)'
-                    },
-                    {
-                        label: translations.radar_dataset_zalo[lang],
-                        data: [6, 2, 7, 8, 6],
-                        backgroundColor: 'rgba(168, 85, 247, 0.2)',
-                        borderColor: 'rgba(147, 51, 234, 1)',
-                        pointBackgroundColor: 'rgba(147, 51, 234, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(147, 51, 234, 1)'
-                    }]
-                };
-            
-                const radarConfig = {
-                    type: 'radar',
-                    data: radarData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        elements: { line: { borderWidth: 3 } },
-                        scales: {
-                            r: {
-                                angleLines: { display: true },
-                                suggestedMin: 0,
-                                suggestedMax: 10,
-                                pointLabels: { font: { size: 12 } },
-                                ticks: { stepSize: 2 }
-                            }
-                        },
-                        plugins: {
-                            legend: { position: 'top' },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) { label += ': '; }
-                                        if (context.parsed.r !== null) { label += context.parsed.r + ' / 10'; }
-                                        return label;
-                                    }
-                                }
-                            }
-                        }
-                    },
-                };
-                radarChartInstance = new Chart(radarCtx, radarConfig);
+    // --- Translations Object ---
+    const translations = {
+        vi: {
+            // Login & Auth
+            login_prompt: 'Đăng nhập để bắt đầu kết nối!',
+            login_email: 'Email',
+            login_password: 'Mật khẩu',
+            login_terms: 'Tôi đồng ý với ',
+            login_terms_link: 'Điều khoản',
+            login_policy_link: 'Chính sách',
+            login_button: 'Đăng nhập',
+            login_with: 'hoặc đăng nhập với',
+            login_signup_prompt: 'Chưa có tài khoản? ',
+            login_signup_link: 'Đăng ký ngay',
+            signup_title: 'Tạo tài khoản',
+            signup_subtitle: 'Tham gia cộng đồng Kèo Thơm!',
+            signup_name: 'Họ và Tên',
+            signup_email: 'Email',
+            signup_password: 'Mật khẩu',
+            signup_button: 'Đăng ký',
+            signup_login_prompt: 'Đã có tài khoản? ',
+            signup_login_link: 'Đăng nhập',
+            verify_title: 'Xác minh danh tính',
+            verify_subtitle: 'Để đảm bảo an toàn, vui lòng tải lên ảnh mặt trước CCCD của bạn.',
+            verify_front: 'Nhấn để tải ảnh lên',
+            verify_button: 'Hoàn tất & Bắt đầu',
+            upload_status_uploaded: 'Đã tải lên ✓',
+
+            // Main App UI
+            tagline: 'Kết nối tức thời, Gắn kết cộng đồng.',
+            nav_home: 'Trang chủ',
+            nav_my_keos: 'Kèo của tôi',
+            nav_notifications: 'Thông báo',
+            create_keo_button: 'Tạo Kèo Mới',
+            search_placeholder: 'Tìm kiếm kèo...',
+            feed_title: 'Kèo Nổi Bật Quanh Đây',
+            filter_all: 'Tất cả',
+            filter_eating: '🍔 Ăn uống',
+            filter_sports: '⚽️ Thể thao',
+            filter_study: '📚 Học tập',
+            filter_fun: '🎬 Giải trí',
+            map_title: 'Bản đồ Kèo',
+            details_prompt_title: 'Chọn một kèo để xem chi tiết',
+            details_prompt_subtitle: 'Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.',
+            no_keo_found: 'Không có kèo nào phù hợp.',
+            participants_count_suffix: 'người',
+
+            // Create Keo Modal
+            modal_create_title: 'Tạo Kèo Mới',
+            modal_create_content: 'Nội dung kèo',
+            modal_create_suggest: '✨ Gợi ý',
+            modal_create_category: 'Loại kèo',
+            category_eating: 'Ăn uống',
+            category_sports: 'Thể thao',
+            category_study: 'Học tập',
+            category_fun: 'Giải trí',
+            modal_create_location: 'Địa điểm',
+            modal_create_max_participants: 'Số người tối đa (gồm bạn)',
+            modal_cancel: 'Hủy',
+            modal_create_publish: 'Đăng Kèo',
+            alert_fill_fields: 'Vui lòng điền đầy đủ nội dung và địa điểm.',
+
+            // Profile Modal
+            profile_university: 'Sinh viên - Đại học Quốc gia Hà Nội',
+            profile_tab_created: 'Kèo đã tạo',
+            profile_tab_joined: 'Kèo đã tham gia',
+            profile_no_created: 'Chưa có hoạt động nào.',
+            profile_no_joined: 'Bạn chưa tham gia kèo nào.',
+            profile_logout: 'Đăng xuất',
+
+            // Keo Details
+            details_participants_title: 'Những người sẽ tham gia',
+            details_join_button: 'Tham gia Kèo này',
+            details_leave_button: 'Rời khỏi Kèo',
+            details_full: 'Kèo đã đủ người',
+            details_icebreaker_button: '✨ Gợi ý câu chào hỏi (AI)',
+            details_icebreaker_title: '✨ Thử vài câu hỏi phá băng (AI):',
+
+            // Gemini specific
+            gemini_error: 'Đã xảy ra lỗi, vui lòng thử lại.',
+            gemini_prompt_title: 'Vui lòng nhập loại kèo hoặc địa điểm để AI gợi ý.',
+        },
+        en: {
+            // Login & Auth
+            login_prompt: 'Login to start connecting!',
+            login_email: 'Email',
+            login_password: 'Password',
+            login_terms: 'I agree to the ',
+            login_terms_link: 'Terms',
+            login_policy_link: 'Policy',
+            login_button: 'Login',
+            login_with: 'or log in with',
+            login_signup_prompt: "Don't have an account? ",
+            login_signup_link: 'Sign up now',
+            signup_title: 'Create Account',
+            signup_subtitle: 'Join the Kèo Thơm community!',
+            signup_name: 'Full Name',
+            signup_email: 'Email',
+            signup_password: 'Password',
+            signup_button: 'Sign Up',
+            signup_login_prompt: 'Already have an account? ',
+            signup_login_link: 'Log in',
+            verify_title: 'Identity Verification',
+            verify_subtitle: 'For community safety, please upload the front of your National ID.',
+            verify_front: 'Click to upload photo',
+            verify_button: 'Complete & Get Started',
+            upload_status_uploaded: 'Uploaded ✓',
+
+            // Main App UI
+            tagline: 'Spontaneous Connections, Stronger Communities.',
+            nav_home: 'Home',
+            nav_my_keos: 'My Keos',
+            nav_notifications: 'Notifications',
+            create_keo_button: 'Create New Keo',
+            search_placeholder: 'Search for keos...',
+            feed_title: 'Featured Keos Nearby',
+            filter_all: 'All',
+            filter_eating: '🍔 Eating',
+            filter_sports: '⚽️ Sports',
+            filter_study: '📚 Study',
+            filter_fun: '🎬 Fun',
+            map_title: 'Keo Map',
+            details_prompt_title: 'Select a keo to see details',
+            details_prompt_subtitle: 'Information about location, time, and participants will appear here.',
+            no_keo_found: 'No matching keos found.',
+            participants_count_suffix: 'people',
+
+             // Create Keo Modal
+            modal_create_title: 'Create New Keo',
+            modal_create_content: 'Keo content',
+            modal_create_suggest: '✨ Suggest',
+            modal_create_category: 'Keo type',
+            category_eating: 'Eating',
+            category_sports: 'Sports',
+            category_study: 'Study',
+            category_fun: 'Fun',
+            modal_create_location: 'Location',
+            modal_create_max_participants: 'Max participants (incl. you)',
+            modal_cancel: 'Cancel',
+            modal_create_publish: 'Post Keo',
+            alert_fill_fields: 'Please fill in the content and location.',
+
+            // Profile Modal
+            profile_university: 'Student - Vietnam National University, Hanoi',
+            profile_tab_created: 'Created Keos',
+            profile_tab_joined: 'Joined Keos',
+            profile_no_created: 'No activities yet.',
+            profile_no_joined: "You haven't joined any keos yet.",
+            profile_logout: 'Logout',
+
+            // Keo Details
+            details_participants_title: 'Who will join',
+            details_join_button: 'Join this Keo',
+            details_leave_button: 'Leave Keo',
+            details_full: 'Keo is full',
+            details_icebreaker_button: '✨ Suggest Icebreakers (AI)',
+            details_icebreaker_title: '✨ Try some icebreakers (AI):',
+
+            // Gemini specific
+            gemini_error: 'An error occurred, please try again.',
+            gemini_prompt_title: 'Please enter a keo type or location for AI suggestions.',
+        }
+    };
+    
+    // --- DOM Elements ---
+    const authContainer = document.getElementById('auth-container');
+    const loginScreen = document.getElementById('login-screen');
+    const signupScreen = document.getElementById('signup-screen');
+    const verificationScreen = document.getElementById('verification-screen');
+    const mainApp = document.getElementById('main-app');
+    const loginBtn = document.getElementById('login-btn');
+    const signupLink = document.getElementById('signup-link');
+    const backToLoginLink = document.getElementById('back-to-login-link');
+    const signupBtn = document.getElementById('signup-btn');
+    const submitVerificationBtn = document.getElementById('submit-verification-btn');
+    const cccdUploadInput = document.getElementById('cccd-upload');
+    const uploadText = document.getElementById('upload-text');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+    const keoFeed = document.getElementById('keo-feed');
+    const filtersContainer = document.getElementById('filters');
+    const keoDetailsContainer = document.getElementById('keo-details');
+    const profileBtn = document.getElementById('profile-btn');
+    const profileModal = document.getElementById('profile-modal');
+    const logoutBtn = document.getElementById('logout-btn');
+    const profileName = document.getElementById('profile-modal-name');
+    const profileUniversity = document.getElementById('profile-modal-university');
+    const profileAvatar = document.getElementById('profile-modal-avatar');
+    const profileAvatarText = document.querySelector('#profile-btn img');
+    const profileHeaderText = document.querySelector('#profile-btn span');
+    const createdKeosTab = document.getElementById('tab-content-created');
+    const joinedKeosTab = document.getElementById('tab-content-joined');
+    
+    const createKeoBtn = document.getElementById('create-keo-btn');
+    const createKeoModal = document.getElementById('create-keo-modal');
+    
+    const geminiTitleBtn = document.getElementById('gemini-title-btn');
+    const titleLoader = document.getElementById('title-loader');
+    const titleSuggestionsContainer = document.getElementById('title-suggestions');
+    const keoTitleInput = document.getElementById('keo-title-input');
+    const keoCategoryInput = document.getElementById('keo-category-input');
+    const keoLocationInput = document.getElementById('keo-location-input');
+    const keoMaxInput = document.getElementById('keo-max-input');
+    const publishKeoBtn = document.getElementById('publish-keo-btn');
+    
+    let map;
+    let markers = [];
+    let activeMarker = null;
+
+    let currentLang = 'vi';
+
+    // --- Language Function ---
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        document.querySelectorAll('[data-translate-key]').forEach(el => {
+            const key = el.getAttribute('data-translate-key');
+            if (translations[lang] && translations[lang][key]) {
+                // Handle complex innerHTML for terms link
+                 if (key === 'login_terms') {
+                     el.innerHTML = `${translations[lang][key]}<a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_terms_link']}</a> ${lang === 'vi' ? 'và' : 'and'} <a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_policy_link']}</a>`;
+                 } else {
+                     el.textContent = translations[lang][key];
+                 }
             }
-
-            function setLanguage(lang) {
-                document.documentElement.lang = lang;
-                document.querySelectorAll('[data-translate-key]').forEach(element => {
-                    const key = element.getAttribute('data-translate-key');
-                    if (translations[key] && translations[key][lang]) {
-                        element.innerHTML = translations[key][lang];
-                    }
-                });
-
-                document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
-                document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-                createRadarChart(lang);
-            }
-            
-            // Language Buttons
-            document.getElementById('lang-vi').addEventListener('click', () => setLanguage('vi'));
-            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-            
-            // Initial Load
-            setLanguage('vi');
-
-            // Business Model Toggle
-            const btnPhase1 = document.getElementById('btnPhase1');
-            const btnPhase2 = document.getElementById('btnPhase2');
-            const contentPhase1 = document.getElementById('contentPhase1');
-            const contentPhase2 = document.getElementById('contentPhase2');
-
-            btnPhase1.addEventListener('click', () => {
-                contentPhase1.classList.remove('hidden');
-                contentPhase2.classList.add('hidden');
-                btnPhase1.classList.add('active');
-                btnPhase2.classList.remove('active');
-            });
-
-            btnPhase2.addEventListener('click', () => {
-                contentPhase2.classList.remove('hidden');
-                contentPhase1.classList.add('hidden');
-                btnPhase2.classList.add('active');
-                btnPhase1.classList.remove('active');
-            });
-            
-            // Active Nav Link on Scroll
-            const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('nav a');
-
-            window.addEventListener('scroll', () => {
-                let current = '';
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 70) {
-                        current = section.getAttribute('id');
-                    }
-                });
-
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href').includes(current)) {
-                        link.classList.add('active');
-                    }
-                });
-            });
         });
-    </script>
+        
+        // Re-attach listeners for dynamically created links in login/signup prompts
+        const signupPrompt = document.querySelector('[data-translate-key="login_signup_prompt"]');
+        if (signupPrompt) {
+            signupPrompt.innerHTML = `${translations[lang]['login_signup_prompt']}<a href="#" id="signup-link-dynamic" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_signup_link']}</a>`;
+            document.getElementById('signup-link-dynamic').addEventListener('click', showSignupScreen);
+        }
+        const loginPrompt = document.querySelector('[data-translate-key="signup_login_prompt"]');
+         if (loginPrompt) {
+            loginPrompt.innerHTML = `${translations[lang]['signup_login_prompt']}<a href="#" id="back-to-login-link-dynamic" class="font-medium text-teal-600 hover:underline">${translations[lang]['signup_login_link']}</a>`;
+            document.getElementById('back-to-login-link-dynamic').addEventListener('click', showLoginScreen);
+        }
 
+        // Update placeholder texts if needed
+        const searchInput = document.querySelector('input[data-translate-key="search_placeholder"]');
+        if(searchInput) searchInput.placeholder = translations[lang].search_placeholder;
+        
+        // Update language buttons state
+        document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
+        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+        // Update university name in profile modal based on language
+        profileUniversity.textContent = lang === 'vi' ? 'Sinh viên - Đại học Quốc gia Hà Nội' : 'Student - Vietnam National University, Hanoi';
+
+
+        // Re-render dynamic content like Keo feed and details
+        const currentFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+        renderKeos(currentFilter); // This function needs to handle translations internally
+        
+        // Reset details pane
+        keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[lang].details_prompt_title}</p><p class="text-sm">${translations[lang].details_prompt_subtitle}</p></div>`;
+        
+        // Update profile tab content placeholders
+        if (userCreatedKeos.length === 0) createdKeosTab.querySelector('p').textContent = translations[lang].profile_no_created;
+        if (userJoinedKeos.length === 0) joinedKeosTab.querySelector('p').textContent = translations[lang].profile_no_joined;
+    }
+
+
+    // --- Map Functions ---
+    function initMap() {
+        const hanoi = { lat: 21.0278, lng: 105.8342 };
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: hanoi,
+            zoom: 13,
+            disableDefaultUI: true,
+            styles: [{"featureType": "poi","stylers": [{ "visibility": "off" }]},{"featureType": "road","elementType": "labels.icon","stylers": [{ "visibility": "off" }]},{"featureType": "transit","stylers": [{ "visibility": "off" }]}]
+        });
+        renderKeos('all'); // Initial render populates map
+    }
+
+    const highlightMarker = (marker) => {
+        if (!marker) return;
+        if (activeMarker) activeMarker.setAnimation(null);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(() => marker.setAnimation(null), 1400); // Bounce for 2 cycles
+        map.panTo(marker.getPosition());
+        map.setZoom(15);
+        activeMarker = marker;
+    };
+
+     const clearMarkers = () => {
+        markers.forEach(marker => marker.setMap(null));
+        markers = [];
+        activeMarker = null;
+    }
+
+    const addMarker = (keo) => {
+        if (!map || !keo.lat || !keo.lng) return;
+        const marker = new google.maps.Marker({
+            position: { lat: keo.lat, lng: keo.lng },
+            map: map,
+            title: keo.title,
+            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#14B8A6', fillOpacity: 1, strokeWeight: 2, strokeColor: 'white' }
+        });
+        marker.keoId = keo.id;
+        marker.addListener("click", () => {
+             renderKeoDetails(keo); // Show details when marker is clicked
+        });
+        markers.push(marker);
+        return marker; // Return the marker object
+    }
+
+    // --- Gemini API Call Function ---
+    async function callGemini(prompt, retries = 3, delay = 1000) {
+        const apiKey = ""; // Keep empty
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+            if (candidate?.content?.parts?.[0]?.text) {
+                return candidate.content.parts[0].text;
+            } else { throw new Error("Invalid response structure from Gemini API"); }
+        } catch (error) {
+            console.error("Gemini API call failed:", error);
+            if (retries > 0) {
+                await new Promise(res => setTimeout(res, delay));
+                return callGemini(prompt, retries - 1, delay * 2);
+            }
+            return translations[currentLang].gemini_error;
+        }
+    }
+    
+    // --- Gemini Feature 1: Title Suggestion ---
+    geminiTitleBtn.addEventListener('click', async () => {
+        const category = keoCategoryInput.value;
+        const location = keoLocationInput.value;
+        if (!category && !location) {
+            alert(translations[currentLang].gemini_prompt_title);
+            return;
+        }
+        titleLoader.classList.remove('hidden');
+        geminiTitleBtn.disabled = true;
+        titleSuggestionsContainer.innerHTML = '';
+        const prompt = currentLang === 'vi' ? `Gợi ý 3 tên "kèo" thật hấp dẫn, ngắn gọn bằng tiếng Việt cho sinh viên. Văn phong trẻ trung. Loại kèo: ${category}. Địa điểm: ${location}. Chỉ trả về 3 gợi ý, mỗi gợi ý trên một dòng, không đánh số.` : `Suggest 3 catchy, short "event" names in English for university students. Keep a fun, youthful tone. Event type: ${category}. Location: ${location}. Return only 3 suggestions, each on a new line, without any numbering.`;
+        const response = await callGemini(prompt);
+        const suggestions = response.split('\n').filter(s => s.trim() !== '');
+        suggestions.forEach(suggestion => {
+            const btn = document.createElement('button');
+            btn.textContent = suggestion;
+            btn.className = 'w-full text-left p-2 bg-gray-100 rounded-md hover:bg-gray-200 text-sm';
+            btn.onclick = () => { keoTitleInput.value = suggestion; titleSuggestionsContainer.innerHTML = ''; };
+            titleSuggestionsContainer.appendChild(btn);
+        });
+        titleLoader.classList.add('hidden');
+        geminiTitleBtn.disabled = false;
+    });
+
+    // --- Gemini Feature 2: Icebreakers ---
+    const generateIcebreakers = async (keoTitle) => {
+        const icebreakerContainer = document.getElementById('icebreaker-container');
+        if (!icebreakerContainer) return; // Check if element exists
+        icebreakerContainer.innerHTML = `<div class="flex items-center justify-center p-4"><div class="loader"></div></div>`;
+        const prompt = currentLang === 'vi' ? `Gợi ý 3 câu hỏi "phá băng" tự nhiên, thú vị để bắt đầu cuộc trò chuyện cho nhóm sinh viên lần đầu gặp mặt trong hoạt động: "${keoTitle}". Giữ câu hỏi ngắn gọn. Chỉ trả về 3 câu hỏi, mỗi câu trên một dòng, không đánh số.` : `Suggest 3 natural, fun "icebreaker" questions to start a conversation for a group of university students meeting for the first time at this event: "${keoTitle}". Keep the questions short and open-ended. Return only 3 questions, each on a new line, without any numbering.`;
+        const response = await callGemini(prompt);
+        const icebreakers = response.split('\n').filter(s => s.trim() !== '');
+        icebreakerContainer.innerHTML = `<h4 class="font-bold mb-2">${translations[currentLang].details_icebreaker_title}</h4><ul class="list-disc list-inside space-y-2 text-sm text-gray-600">${icebreakers.map(q => `<li>${q}</li>`).join('')}</ul>`;
+    };
+
+    // --- Render Keo Details ---
+    const renderKeoDetails = (keo) => {
+        if (!keo) { // Handle case where keo might be undefined
+             keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
+             return;
+        }
+        const participantAvatars = keo.participants.map(p => `<div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center border-2 border-white" title="${p}">${p.charAt(0)}</div>`).join('');
+        const isParticipant = keo.participants.includes(currentUser.name);
+        const isFull = keo.participants.length >= keo.maxParticipants;
+
+        let joinButtonHTML = '';
+        if (isParticipant) {
+            joinButtonHTML = `<button id="leave-keo-btn" data-keo-id="${keo.id}" class="w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition-colors">${translations[currentLang].details_leave_button}</button>`;
+        } else if (isFull) {
+            joinButtonHTML = `<button class="w-full bg-gray-300 text-gray-500 font-bold py-3 px-4 rounded-lg cursor-not-allowed">${translations[currentLang].details_full}</button>`;
+        } else {
+             joinButtonHTML = `<button id="join-keo-btn" data-keo-id="${keo.id}" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors">${translations[currentLang].details_join_button}</button>`;
+        }
+
+        keoDetailsContainer.innerHTML = `
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <p class="text-sm font-bold text-orange-600">${keo.category}</p>
+                <h2 class="text-2xl font-bold mt-1">${keo.title}</h2>
+            </div>
+            <div class="mt-4 space-y-3">
+                <div class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span class="truncate" title="${keo.location}">${keo.location}</span>
+                </div>
+                <div class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>${keo.time}</span>
+                </div>
+            </div>
+            <div class="mt-6">
+                <h4 class="font-bold mb-3">${translations[currentLang].details_participants_title} (${keo.participants.length}/${keo.maxParticipants})</h4>
+                <div class="flex -space-x-2 flex-wrap">
+                    ${participantAvatars}
+                </div>
+            </div>
+            <div id="icebreaker-section" class="mt-6 space-y-2">
+                 <button id="gemini-icebreaker-btn" class="w-full gemini-btn font-semibold py-2 px-3 rounded-md flex items-center justify-center space-x-2 text-sm">
+                    <span>${translations[currentLang].details_icebreaker_button}</span>
+                 </button>
+                 <div id="icebreaker-container" class="p-4 bg-gray-50 rounded-lg hidden"></div>
+            </div>
+            <div class="mt-4">
+                ${joinButtonHTML}
+            </div>
+        `;
+        
+        // Add event listeners for dynamic buttons
+        const icebreakerBtn = document.getElementById('gemini-icebreaker-btn');
+        if(icebreakerBtn) {
+            icebreakerBtn.addEventListener('click', () => { 
+                document.getElementById('icebreaker-container')?.classList.remove('hidden');
+                generateIcebreakers(keo.title); 
+            });
+        }
+        
+        const joinBtn = document.getElementById('join-keo-btn');
+        if(joinBtn) {
+            joinBtn.addEventListener('click', () => handleJoinKeo(keo.id));
+        }
+        
+        const leaveBtn = document.getElementById('leave-keo-btn');
+        if(leaveBtn) {
+            leaveBtn.addEventListener('click', () => handleLeaveKeo(keo.id));
+        }
+
+        // Highlight marker on map
+        const targetMarker = markers.find(m => m.keoId === keo.id);
+        if (targetMarker) highlightMarker(targetMarker);
+    }
+
+    // --- Join/Leave Keo Logic ---
+    function handleJoinKeo(keoId) {
+        const keoIndex = DUMMY_KEOS.findIndex(k => k.id === keoId);
+        if (keoIndex !== -1 && !DUMMY_KEOS[keoIndex].participants.includes(currentUser.name) && DUMMY_KEOS[keoIndex].participants.length < DUMMY_KEOS[keoIndex].maxParticipants) {
+            DUMMY_KEOS[keoIndex].participants.push(currentUser.name);
+            userJoinedKeos.push(DUMMY_KEOS[keoIndex]); // Add to joined list
+            renderKeoDetails(DUMMY_KEOS[keoIndex]); // Re-render details
+            renderKeos(document.querySelector('.filter-btn.active').dataset.filter); // Re-render feed to update count
+        }
+    }
+    
+    function handleLeaveKeo(keoId) {
+        const keoIndex = DUMMY_KEOS.findIndex(k => k.id === keoId);
+        if (keoIndex !== -1) {
+            DUMMY_KEOS[keoIndex].participants = DUMMY_KEOS[keoIndex].participants.filter(p => p !== currentUser.name);
+             userJoinedKeos = userJoinedKeos.filter(k => k.id !== keoId); // Remove from joined list
+            renderKeoDetails(DUMMY_KEOS[keoIndex]); // Re-render details
+            renderKeos(document.querySelector('.filter-btn.active').dataset.filter); // Re-render feed to update count
+        }
+    }
+    
+    // --- Render Keo Feed ---
+    const renderKeos = (filter = 'all') => {
+        keoFeed.innerHTML = '';
+        clearMarkers(); // Clear existing markers before adding new ones
+        const filteredKeos = filter === 'all' 
+            ? DUMMY_KEOS 
+            : DUMMY_KEOS.filter(keo => keo.category === translations['vi'][`category_${filter.toLowerCase()}`] || keo.category === translations['en'][`category_${filter.toLowerCase()}`] || keo.category === filter ); // Handle category filter with translation
+
+        if (filteredKeos.length === 0) {
+            keoFeed.innerHTML = `<p class="text-center text-gray-500">${translations[currentLang].no_keo_found}</p>`;
+            return;
+        }
+
+        filteredKeos.forEach(keo => {
+            const keoCard = document.createElement('div');
+            keoCard.className = 'bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:border-teal-500 hover:shadow-md transition-all';
+            keoCard.onclick = () => renderKeoDetails(keo); 
+
+            const participantAvatars = keo.participants.slice(0, 3).map(p => 
+                `<div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold flex items-center justify-center border-2 border-white" title="${p}">${p.charAt(0)}</div>`
+            ).join('');
+            
+            const moreParticipants = keo.participants.length > 3 
+                ? `<div class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-sm font-bold flex items-center justify-center border-2 border-white">+${keo.participants.length - 3}</div>` 
+                : '';
+
+            keoCard.innerHTML = `
+                <div class="flex items-start">
+                    <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mr-4 text-2xl flex-shrink-0">${keo.avatar}</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-bold text-orange-600 truncate">${keo.category}</p>
+                        <h3 class="font-bold text-lg leading-tight truncate" title="${keo.title}">${keo.title}</h3>
+                        <p class="text-xs text-gray-500 mt-1 truncate" title="${keo.location}">${keo.location}</p>
+                    </div>
+                    <div class="text-right ml-2 flex-shrink-0">
+                        <p class="text-sm font-semibold text-teal-600 whitespace-nowrap">${keo.time}</p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                    <div class="flex -space-x-2 flex-shrink-0">
+                        ${participantAvatars}
+                        ${moreParticipants}
+                    </div>
+                    <span class="text-sm font-bold ml-2 whitespace-nowrap">${keo.participants.length}/${keo.maxParticipants} ${translations[currentLang].participants_count_suffix}</span>
+                </div>
+            `;
+            keoFeed.appendChild(keoCard);
+
+            // Add marker to map for each keo
+            addMarker(keo);
+        });
+    };
+
+    // --- Publish Keo Functionality ---
+    publishKeoBtn.addEventListener('click', () => {
+        const title = keoTitleInput.value;
+        const category = keoCategoryInput.value;
+        const location = keoLocationInput.value;
+        const maxP = parseInt(keoMaxInput.value) || 2; // Default to 2 if invalid
+
+        if (!title.trim() || !location.trim()) {
+            alert(translations[currentLang].alert_fill_fields);
+            return;
+        }
+
+        const categoryMap = { 'Ăn uống': '🍔', 'Thể thao': '⚽️', 'Học tập': '📚', 'Giải trí': '🎬', 'Eating': '🍔', 'Sports': '⚽️', 'Study': '📚', 'Fun': '🎬' };
+
+        const newKeo = {
+            id: 'keo-' + Date.now(),
+            category: category,
+            title: title,
+            location: location,
+            time: currentLang === 'vi' ? 'Vừa xong' : 'Just now',
+            participants: [currentUser.name], // Creator automatically joins
+            maxParticipants: maxP,
+            avatar: categoryMap[category] || '🎉',
+            lat: 21.0278 + (Math.random() - 0.5) * 0.02, // Randomize coords
+            lng: 105.8342 + (Math.random() - 0.5) * 0.02,
+            creator: currentUser.name
+        };
+
+        DUMMY_KEOS.unshift(newKeo); // Add to the global list
+        userCreatedKeos.unshift(newKeo); // Add to user's created list
+        
+        // Reset and close modal
+        keoTitleInput.value = '';
+        keoLocationInput.value = '';
+        keoMaxInput.value = '5'; // Reset max participants
+        titleSuggestionsContainer.innerHTML = '';
+        closeModal(createKeoModal);
+
+        // Update UI: Reset filter to 'all' and re-render
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+        renderKeos('all');
+        renderKeoDetails(newKeo); // Show details of the newly created keo
+    });
+    
+    // --- Render Profile Keo Lists ---
+    function renderProfileKeoList(keos, container) {
+        if (keos.length === 0) {
+            container.innerHTML = `<p class="text-gray-500 text-center">${container.id === 'tab-content-created' ? translations[currentLang].profile_no_created : translations[currentLang].profile_no_joined}</p>`;
+            return;
+        }
+        container.innerHTML = keos.map(keo => `
+            <div class="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="openKeoFromProfile('${keo.id}')">
+                <p class="font-semibold truncate">${keo.title}</p>
+                <p class="text-xs text-gray-500">${keo.location} - ${keo.time}</p>
+            </div>
+        `).join('');
+    }
+    
+    // Function to close profile modal and show keo details
+    function openKeoFromProfile(keoId) {
+        const keo = DUMMY_KEOS.find(k => k.id === keoId);
+        if (keo) {
+            closeModal(profileModal);
+            renderKeoDetails(keo);
+             // Ensure the feed filter is 'all' to see the keo if it doesn't match current filter
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+            renderKeos('all'); // Re-render feed might be needed if filter was active
+        }
+    }
+
+    // --- Event Listeners ---
+    filtersContainer.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON' && e.target.classList.contains('filter-btn')) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            renderKeos(e.target.dataset.filter);
+        }
+    });
+
+    // Auth Flow Logic
+    function showScreen(screenToShow) {
+        [loginScreen, signupScreen, verificationScreen].forEach(screen => {
+            if (screen === screenToShow) {
+                screen.classList.remove('hidden');
+            } else {
+                screen.classList.add('hidden');
+            }
+        });
+         if (screenToShow) authContainer.classList.remove('hidden'); else authContainer.classList.add('hidden');
+         if (!screenToShow) mainApp.classList.remove('hidden'); else mainApp.classList.add('hidden');
+    }
+
+    function showLoginScreen(e) { if(e) e.preventDefault(); showScreen(loginScreen); }
+    function showSignupScreen(e) { if(e) e.preventDefault(); showScreen(signupScreen); }
+
+    loginBtn.addEventListener('click', () => showScreen(null)); // Hide auth, show main app
+    signupLink.addEventListener('click', showSignupScreen);
+    backToLoginLink.addEventListener('click', showLoginScreen);
+    signupBtn.addEventListener('click', () => showScreen(verificationScreen)); // Show verification
+    submitVerificationBtn.addEventListener('click', () => showScreen(null)); // Hide auth, show main app
+    
+    logoutBtn.addEventListener('click', () => {
+        closeModal(profileModal);
+        showScreen(loginScreen); // Hide main app, show login
+        termsCheckbox.checked = false;
+        loginBtn.disabled = true;
+        // Clear user-specific data (optional, depends on real implementation)
+        userCreatedKeos = [];
+        userJoinedKeos = [];
+        // Reset details pane
+        keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
+    });
+
+    termsCheckbox.addEventListener('change', () => { loginBtn.disabled = !termsCheckbox.checked; });
+    cccdUploadInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            uploadText.textContent = translations[currentLang].upload_status_uploaded;
+            uploadText.classList.add('text-teal-600', 'font-bold');
+            submitVerificationBtn.disabled = false;
+        } else {
+             uploadText.textContent = translations[currentLang].verify_front;
+             uploadText.classList.remove('text-teal-600', 'font-bold');
+             submitVerificationBtn.disabled = true;
+        }
+    });
+
+    // Language switcher logic
+    document.getElementById('lang-vi').addEventListener('click', () => setLanguage('vi'));
+    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+
+    // Modal Logic
+    const openModal = (modal) => modal.classList.remove('hidden');
+    const closeModal = (modal) => modal.classList.add('hidden');
+
+    createKeoBtn.addEventListener('click', () => openModal(createKeoModal));
+    profileBtn.addEventListener('click', () => {
+        // Update profile modal before showing
+        profileName.textContent = currentUser.name;
+        // profileUniversity.textContent = currentUser.university; // Update if needed
+        profileAvatar.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
+        profileAvatarText.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
+        profileHeaderText.textContent = currentUser.name;
+        // Render keo lists
+        renderProfileKeoList(userCreatedKeos, createdKeosTab);
+        renderProfileKeoList(userJoinedKeos, joinedKeosTab);
+        // Reset to first tab
+        document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
+        document.querySelector('.profile-tab[data-tab="created"]').classList.add('active');
+        createdKeosTab.classList.remove('hidden');
+        joinedKeosTab.classList.add('hidden');
+
+        openModal(profileModal);
+    });
+    
+    document.querySelectorAll('.close-modal-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const modal = e.target.closest('.fixed[id$="-modal"]'); // Find closest modal parent
+            if (modal) closeModal(modal);
+        });
+    });
+
+    document.querySelectorAll('#modals-container > .fixed').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            // Close modal if clicking on the background overlay
+            if (e.target === modal) closeModal(modal);
+        });
+    });
+    
+    // Profile Tabs Logic
+    const profileTabs = document.querySelectorAll('.profile-tab');
+    const tabContents = { created: createdKeosTab, joined: joinedKeosTab };
+    profileTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            profileTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            Object.values(tabContents).forEach(c => c.classList.add('hidden'));
+            tabContents[tab.dataset.tab].classList.remove('hidden');
+            // Re-render list in case language changed while modal was open
+            if(tab.dataset.tab === 'created') renderProfileKeoList(userCreatedKeos, createdKeosTab);
+            if(tab.dataset.tab === 'joined') renderProfileKeoList(userJoinedKeos, joinedKeosTab);
+        });
+    });
+
+    // --- Initial State ---
+    loginBtn.disabled = true; // Login button disabled initially
+    submitVerificationBtn.disabled = true; // Verification button disabled initially
+    setLanguage('vi'); // Set default language
+    // Don't call initMap here, it's called by the Google Maps script callback
+
+</script>
+<!-- IMPORTANT: Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
 </body>
 </html>
+
