@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kèo Thơm - Giao diện Web</title>
+    <title>Kèo Thơm - Giao diện Web (Mô phỏng)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -22,62 +23,40 @@
             color: white;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
-        }
-        .gemini-btn {
-            background-color: #f0fdfa;
-            color: #0d9488;
-            border: 1px solid #ccfbf1;
-        }
-        .gemini-btn:hover {
-            background-color: #ccfbf1;
-        }
-        .loader {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #14B8A6;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-        .profile-tab.active {
-            border-bottom-color: #14B8A6;
-            color: #14B8A6;
-            font-weight: 600;
-        }
-        .lang-btn {
-            background-color: #e2e8f0;
-            color: #475569;
-            padding: 0.25rem 0.75rem;
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        .gemini-btn { background-color: #f0fdfa; color: #0d9488; border: 1px solid #ccfbf1; }
+        .gemini-btn:hover { background-color: #ccfbf1; }
+        .loader { border: 2px solid #f3f3f3; border-top: 2px solid #14B8A6; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #map-placeholder { width: 100%; height: 100%; }
+        .profile-tab.active { border-bottom-color: #14B8A6; color: #14B8A6; font-weight: 600; }
+        .my-keos-tab.active { border-bottom-color: #14B8A6; color: #14B8A6; font-weight: 600; }
+        .lang-btn { background-color: #e2e8f0; color: #475569; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease; cursor: pointer; }
+        .lang-btn.active { background-color: #14B8A6; color: white; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
+        .error-message { color: #dc2626; font-size: 0.875rem; margin-top: 0.5rem; display: none; }
+        
+        .reel-card {
+            height: 500px;
+            background-color: #000;
             border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .lang-btn.active {
-            background-color: #14B8A6;
+        .reel-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
             color: white;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .sos-card {
+            border-left: 4px solid #ef4444; /* Red border for urgency */
         }
     </style>
 </head>
@@ -102,14 +81,15 @@
                 </div>
                 <div class="space-y-4">
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_email">Email</label>
-                        <input type="email" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="email@daihoc.edu.vn">
+                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_email">Email</label>
+                        <input id="login-email" type="email" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="email@daihoc.edu.vn">
                     </div>
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_password">Mật khẩu</label>
-                        <input type="password" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="••••••••">
+                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="login_password">Mật khẩu</label>
+                        <input id="login-password" type="password" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500 py-2 px-3" placeholder="••••••••">
                     </div>
                 </div>
+                <p id="login-error-msg" class="error-message"></p>
                 <div class="mt-4 flex items-center">
                     <input id="terms-checkbox" type="checkbox" class="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
                     <label for="terms-checkbox" class="ml-2 block text-sm text-gray-700" data-translate-key="login_terms">Tôi đồng ý với <a href="#" class="font-medium text-teal-600 hover:underline">Điều khoản</a> và <a href="#" class="font-medium text-teal-600 hover:underline">Chính sách</a></label>
@@ -141,18 +121,19 @@
                 </div>
                 <div class="space-y-4">
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_name">Họ và Tên</label>
-                        <input type="text" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="Nguyễn Văn A">
+                        <label for="signup-name" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_name">Họ và Tên</label>
+                        <input id="signup-name" type="text" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="Nguyễn Văn A">
                     </div>
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_email">Email</label>
-                        <input type="email" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="email@daihoc.edu.vn">
+                        <label for="signup-email" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_email">Email</label>
+                        <input id="signup-email" type="email" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="email@daihoc.edu.vn">
                     </div>
                      <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_password">Mật khẩu</label>
-                        <input type="password" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="••••••••">
+                        <label for="signup-password" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="signup_password">Mật khẩu</label>
+                        <input id="signup-password" type="password" class="block w-full border-gray-300 rounded-md shadow-sm py-2 px-3" placeholder="••••••••">
                     </div>
                 </div>
+                <p id="signup-error-msg" class="error-message"></p>
                 <div class="mt-6">
                     <button id="signup-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700" data-translate-key="signup_button">
                         Đăng ký
@@ -194,17 +175,41 @@
                 <h1 class="text-3xl font-extrabold text-teal-600">Kèo Thơm</h1>
                 <p class="text-xs text-gray-500" data-translate-key="tagline">Kết nối tức thời, Gắn kết cộng đồng.</p>
             </div>
-            <nav class="flex-1 px-4 py-4 space-y-2">
-                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg active">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                    <span data-translate-key="nav_home">Trang chủ</span>
+            <nav class="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
+                <a href="#home" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg active" data-view="home">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span data-translate-key="nav_home">Tìm Kèo</span>
                 </a>
-                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <a href="#reels" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="reels">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span data-translate-key="nav_reels">Kèo Reels</span>
+                </a>
+                 <a href="#marketplace" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="marketplace">
+                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span data-translate-key="nav_marketplace">Marketplace</span>
+                 </a>
+                 <a href="#coupons" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="coupons">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path></svg>
+                    <span data-translate-key="nav_coupons">Coupon Hub</span>
+                 </a>
+                 <a href="#challenges" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="challenges">
+                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span data-translate-key="nav_challenges">Thử thách & BXH</span>
+                 </a>
+                 <a href="#qna" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="qna">
+                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span data-translate-key="nav_qna">Hỏi Nhanh</span>
+                 </a>
+                 <a href="#sos" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="sos">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <span data-translate-key="nav_sos">SOS Kèo</span>
+                 </a>
+                <a href="#mykeos" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="mykeos">
+                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     <span data-translate-key="nav_my_keos">Kèo của tôi</span>
                 </a>
-                <a href="#" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100">
-                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <a href="#notifications" class="sidebar-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-gray-100" data-view="notifications">
+                     <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                     <span data-translate-key="nav_notifications">Thông báo</span>
                 </a>
             </nav>
@@ -224,42 +229,252 @@
                     <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <div id="profile-btn" class="flex items-center space-x-4 cursor-pointer">
-                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/A7F3D0/134E4A?text=MA" alt="User avatar">
-                    <span class="font-semibold">Minh Anh</span> <!-- Placeholder, will be updated -->
+                    <img id="profile-header-avatar" class="w-10 h-10 rounded-full" src="https://placehold.co/100x100/A7F3D0/134E4A?text=MA" alt="User avatar">
+                    <span id="profile-header-name" class="font-semibold">Minh Anh</span>
                 </div>
             </header>
             
             <div class="flex-1 flex overflow-hidden">
-                <!-- Kèo Feed -->
-                <section class="flex-1 overflow-y-auto p-6">
-                    <div class="mb-6">
-                        <h2 class="text-2xl font-bold mb-4" data-translate-key="feed_title">Kèo Nổi Bật Quanh Đây</h2>
-                        <div id="filters" class="flex flex-wrap gap-2">
+                <!-- Main Content Area - Switches based on sidebar selection -->
+                <div id="main-content-area" class="flex-1 flex overflow-hidden">
+                    <!-- Home View (Default) -->
+                    <div id="view-home" class="flex-1 flex overflow-hidden view-content">
+                        <!-- Kèo Feed -->
+                        <section class="flex-1 overflow-y-auto p-6">
+                            <div class="mb-6">
+                                <h2 class="text-2xl font-bold mb-4" data-translate-key="feed_title">Kèo Nổi Bật Quanh Đây</h2>
+                                <div id="filters" class="flex flex-wrap gap-2">
+                                    <button class="filter-btn active px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="all" data-translate-key="filter_all">Tất cả</button>
+                                    <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Ăn uống" data-translate-key="filter_eating">🍔 Ăn uống</button>
+                                    <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Thể thao" data-translate-key="filter_sports">⚽️ Thể thao</button>
+                                    <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Học tập" data-translate-key="filter_study">📚 Học tập</button>
+                                    <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Giải trí" data-translate-key="filter_fun">🎬 Giải trí</button>
+                                </div>
+                            </div>
+                            <div id="keo-feed" class="space-y-4">
+                                <!-- Kèo cards dynamically generated -->
+                            </div>
+                        </section>
+                        
+                        <!-- Map & Details -->
+                        <aside class="w-1/3 bg-white border-l border-gray-200 p-6 flex-col hidden lg:flex">
+                             <h3 class="text-xl font-bold mb-4" data-translate-key="map_title">Bản đồ Kèo</h3>
+                             <div class="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-6 border">
+                                <div id="map-placeholder" class="bg-gray-200 flex items-center justify-center h-full">
+                                    <p class="text-gray-500" data-translate-key="map_placeholder">Bản đồ Google Maps (đã tắt)</p>
+                                </div>
+                                <button title="Toggle Heatmap" class="absolute top-2 right-2 bg-white p-1.5 rounded shadow text-gray-600 hover:bg-gray-100">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343m11.314 11.314a8 8 0 00-11.314-11.314m11.314 11.314L6.343 7.343"></path></svg>
+                                </button>
+                             </div>
+                             <div id="keo-details" class="flex-1 overflow-y-auto">
+                                <div class="text-center text-gray-500 pt-10">
+                                    <p class="text-lg font-semibold" data-translate-key="details_prompt_title">Chọn một kèo để xem chi tiết</p>
+                                    <p class="text-sm" data-translate-key="details_prompt_subtitle">Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.</p>
+                                </div>
+                             </div>
+                        </aside>
+                    </div>
+
+                    <!-- Placeholder Views for New Features -->
+                    <div id="view-reels" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_reels">Kèo Reels</h2>
+                        <!-- Reels UI Mockup -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="reel-card">
+                                <img src="https://placehold.co/300x500/FCA5A5/450A0A?text=Kèo+ăn+sập+Ký+túc+xá" class="w-full h-full object-cover">
+                                <div class="reel-overlay">
+                                    <p class="font-semibold">@an_nguyen</p>
+                                    <p class="text-sm truncate">Kèo ăn sập Ký túc xá! 🍜</p>
+                                </div>
+                            </div>
+                             <div class="reel-card">
+                                <img src="https://placehold.co/300x500/818CF8/1E1B4B?text=Giao+lưu+guitar" class="w-full h-full object-cover">
+                                <div class="reel-overlay">
+                                    <p class="font-semibold">@linh_music</p>
+                                    <p class="text-sm truncate">Giao lưu guitar tại sân C1 🎸</p>
+                                </div>
+                            </div>
+                             <div class="reel-card">
+                                <img src="https://placehold.co/300x500/FCD34D/78350F?text=Thử+thách+đá+cầu" class="w-full h-full object-cover">
+                                <div class="reel-overlay">
+                                    <p class="font-semibold">@hung_thethao</p>
+                                    <p class="text-sm truncate">Thử thách đá cầu cuối tuần</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="view-marketplace" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_marketplace">Marketplace (Chợ Kèo)</h2>
+                        
+                        <!-- Marketplace UI -->
+                        <div class="mb-4">
+                            <input type="text" class="w-full bg-white border border-gray-300 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Tìm kiếm trong Marketplace... (VD: Sách Giải tích 1)">
+                        </div>
+                        <div class="flex flex-wrap gap-2 mb-6">
                             <button class="filter-btn active px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="all" data-translate-key="filter_all">Tất cả</button>
-                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Ăn uống" data-translate-key="filter_eating">🍔 Ăn uống</button>
-                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Thể thao" data-translate-key="filter_sports">⚽️ Thể thao</button>
-                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Học tập" data-translate-key="filter_study">📚 Học tập</button>
-                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="Giải trí" data-translate-key="filter_fun">🎬 Giải trí</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="books">📚 Sách/Tài liệu</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="electronics">📱 Đồ điện tử</button>
+                            <button class="filter-btn px-4 py-1.5 text-sm font-semibold rounded-full bg-gray-200 hover:bg-gray-300 transition-colors" data-filter="furniture">🛋️ Đồ dùng</button>
+                        </div>
+
+                        <!-- Marketplace Item Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Item Card 1 -->
+                            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                <img src="https://placehold.co/600x400/E0F2F1/00796B?text=Sách+Giải+tích" alt="Sách Giải tích 1" class="h-48 w-full object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg">Sách Giải tích 1 (còn mới 99%)</h3>
+                                    <p class="text-teal-600 font-bold text-xl mt-2">70.000 VNĐ</p>
+                                    <p class="text-sm text-gray-500 mt-1">Người bán: An Nguyễn (KTX Mễ Trì)</p>
+                                </div>
+                            </div>
+                            <!-- Item Card 2 -->
+                            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                <img src="https://placehold.co/600x400/FFF3E0/E65100?text=Tai+nghe" alt="Tai nghe Bluetooth" class="h-48 w-full object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg">Pass tai nghe Bluetooth Sony</h3>
+                                    <p class="text-teal-600 font-bold text-xl mt-2">350.000 VNĐ</p>
+                                    <p class="text-sm text-gray-500 mt-1">Người bán: Hùng Lê (Bách Khoa)</p>
+                                </div>
+                            </div>
+                            <!-- Item Card 3 -->
+                            <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+                                <img src="https://placehold.co/600x400/E3F2FD/0D47A1?text=Quạt+bàn" alt="Quạt bàn" class="h-48 w-full object-cover">
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg">Thanh lý quạt bàn Senko</h3>
+                                    <p class="text-teal-600 font-bold text-xl mt-2">100.000 VNĐ</p>
+                                    <p class="text-sm text-gray-500 mt-1">Người bán: Trang Trần (KTX Ngoại Ngữ)</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div id="keo-feed" class="space-y-4">
-                        <!-- Kèo cards dynamically generated -->
-                    </div>
-                </section>
-                
-                <!-- Map & Details -->
-                <aside class="w-1/3 bg-white border-l border-gray-200 p-6 flex-col hidden lg:flex">
-                     <h3 class="text-xl font-bold mb-4" data-translate-key="map_title">Bản đồ Kèo</h3>
-                     <div class="relative w-full h-64 bg-gray-100 rounded-lg overflow-hidden mb-6 border">
-                        <div id="map"></div>
-                     </div>
-                     <div id="keo-details" class="flex-1 overflow-y-auto">
-                        <div class="text-center text-gray-500 pt-10">
-                            <p class="text-lg font-semibold" data-translate-key="details_prompt_title">Chọn một kèo để xem chi tiết</p>
-                            <p class="text-sm" data-translate-key="details_prompt_subtitle">Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.</p>
+                     <div id="view-coupons" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_coupons">Coupon Hub</h2>
+                        <!-- Coupon UI Mockup -->
+                        <div class="space-y-4">
+                            <div class="bg-white p-4 rounded-lg shadow border border-gray-200 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://placehold.co/100x100/FEE2E2/B91C1C?text=Toco" class="w-16 h-16 rounded-lg mr-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg">Giảm 20% TocoToco</h3>
+                                        <p class="text-sm text-gray-500">Áp dụng cho Kèo đi từ 2 người. Hết hạn: 30/11</p>
+                                    </div>
+                                </div>
+                                <button class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Lấy mã</button>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow border border-gray-200 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <img src="https://placehold.co/100x100/E0E7FF/312E81?text=CGV" class="w-16 h-16 rounded-lg mr-4">
+                                    <div>
+                                        <h3 class="font-bold text-lg">Mua 1 tặng 1 vé CGV</h3>
+                                        <p class="text-sm text-gray-500">Cho Kèo "Giải trí" vào thứ 3. Hết hạn: 25/11</p>
+                                    </div>
+                                </div>
+                                <button class="bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm">Lấy mã</button>
+                            </div>
                         </div>
-                     </div>
-                </aside>
+                    </div>
+                     <div id="view-challenges" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_challenges">Thử thách & BXH</h2>
+                        
+                        <!-- Gemini Challenge Generator -->
+                        <div class="mb-6">
+                            <button id="gemini-challenge-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors flex items-center justify-center space-x-2">
+                                <span data-translate-key="challenge_suggest_btn">✨ Gợi ý Thử thách Tuần mới</span>
+                                <div id="challenge-loader" class="loader hidden"></div>
+                            </button>
+                        </div>
+                        <div id="challenge-suggestion-box" class="bg-white p-6 rounded-lg shadow border border-gray-200 hidden mb-6">
+                            <h3 class="text-lg font-semibold text-teal-700" data-translate-key="challenge_idea_title">Ý tưởng Thử thách:</h3>
+                            <p id="challenge-suggestion-text" class="mt-2 text-gray-700"></p>
+                        </div>
+
+                        <!-- Leaderboard Mockup -->
+                        <h3 class="text-xl font-bold mb-4">Bảng Xếp Hạng KTX Mễ Trì</h3>
+                        <div class="bg-white rounded-lg shadow border border-gray-200 divide-y divide-gray-200">
+                            <div class="p-4 flex items-center space-x-4">
+                                <span class="font-bold text-lg">1.</span>
+                                <img src="https://placehold.co/100x100/FEF3C7/92400E?text=HV" class="w-10 h-10 rounded-full">
+                                <span class="font-semibold">Hùng Vũ</span>
+                                <span class="ml-auto font-bold text-teal-600">1500 XP</span>
+                            </div>
+                            <div class="p-4 flex items-center space-x-4">
+                                <span class="font-bold text-lg">2.</span>
+                                <img src="https://placehold.co/100x100/D1FAE5/064E3B?text=LT" class="w-10 h-10 rounded-full">
+                                <span class="font-semibold">Linh Trang</span>
+                                <span class="ml-auto font-bold text-teal-600">1350 XP</span>
+                            </div>
+                            <div class="p-4 flex items-center space-x-4">
+                                <span class="font-bold text-lg">3.</span>
+                                <img src="https://placehold.co/100x100/DBEAFE/1E3A8A?text=QA" class="w-10 h-10 rounded-full">
+                                <span class="font-semibold">Quân Anh</span>
+                                <span class="ml-auto font-bold text-teal-600">1200 XP</span>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="view-qna" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_qna">Hỏi Nhanh</h2>
+                        <!-- Q&A Mockup -->
+                        <div class="mb-4">
+                            <textarea class="w-full bg-white border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-teal-500" rows="3" placeholder="Đặt câu hỏi ẩn danh cho cộng đồng KTX... (VD: Căng tin còn mở cửa không?)"></textarea>
+                            <button class="mt-2 bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-700">Đăng câu hỏi</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-white p-4 rounded-lg shadow border border-gray-200">
+                                <p class="font-semibold">Thư viện Tạ Quang Bửu tối nay có đông không mọi người?</p>
+                                <p class="text-sm text-gray-500 mt-2">5 phút trước - Ẩn danh</p>
+                                <button class="text-sm text-teal-600 font-semibold mt-2">2 câu trả lời...</button>
+                            </div>
+                            <div class="bg-white p-4 rounded-lg shadow border border-gray-200">
+                                <p class="font-semibold">Ai ở KTX Mễ Trì cho mượn sạc iPhone 10 phút với ạ! Mình ở P301.</p>
+                                <p class="text-sm text-gray-500 mt-2">12 phút trước - @minh_anh</p>
+                                <button class="text-sm text-teal-600 font-semibold mt-2">Trả lời</button>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="view-sos" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_sos">SOS Kèo</h2>
+                        <!-- SOS Mockup -->
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
+                            <strong class="font-bold">Cảnh báo!</strong>
+                            <span class="block sm:inline">Chỉ dùng tính năng này cho các yêu cầu trợ giúp nhỏ, khẩn cấp, phi tài chính. Lạm dụng có thể bị khóa tài khoản.</span>
+                        </div>
+                        <button class="w-full bg-red-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-700 transition-colors">Tạo Yêu cầu SOS Mới</button>
+                         <div class="mt-6 space-y-4">
+                            <div class="bg-white p-4 rounded-lg shadow border border-gray-200 sos-card">
+                                <h3 class="font-bold text-lg text-red-600">HẾT XĂNG</h3>
+                                <p class="text-gray-700 mt-1">Xe mình hết xăng ở gần cổng Parabol ĐHQG, ai tiện đi qua giúp đẩy một đoạn với ạ!</p>
+                                <!-- SỬA LỖI: </V> -> </p> -->
+                                <p class="text-sm text-gray-500 mt-2">5 phút trước - @hoang_nam</p>
+                                <button class="mt-3 bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg text-sm">Tôi có thể giúp</button>
+                            </div>
+                         </div>
+                    </div>
+                     <div id="view-mykeos" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_my_keos">Kèo của tôi</h2>
+                        
+                        <!-- NEW: My Keos UI -->
+                        <div class="border-b border-gray-200 mb-4">
+                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                                <button class="my-keos-tab active whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="my-created" data-translate-key="my_keos_created_title">Kèo tôi tạo</button>
+                                <button class="my-keos-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="my-joined" data-translate-key="my_keos_joined_title">Kèo tôi tham gia</button>
+                            </nav>
+                        </div>
+                        
+                        <div id="my-created-keos-list" class="space-y-4 my-keos-tab-content">
+                            <!-- Dynamically populated -->
+                        </div>
+                         <div id="my-joined-keos-list" class="space-y-4 my-keos-tab-content hidden">
+                            <!-- Dynamically populated -->
+                        </div>
+
+                    </div>
+                     <div id="view-notifications" class="flex-1 p-6 overflow-y-auto view-content hidden">
+                        <h2 class="text-2xl font-bold mb-4" data-translate-key="nav_notifications">Thông báo</h2>
+                        <p class="text-gray-500" data-translate-key="coming_soon">Tính năng sắp ra mắt! Tất cả cập nhật về kèo sẽ ở đây.</p>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -324,11 +539,22 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- NEW: Profile Bio Section -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="profile_bio">Giới thiệu ngắn</label>
+                    <textarea id="profile-bio-input" class="block w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500" rows="2" placeholder="Nói gì đó về bạn..."></textarea>
+                    <button id="gemini-bio-btn" class="gemini-btn font-semibold py-1 px-2 rounded-md flex items-center space-x-2 text-xs mt-2">
+                        <span data-translate-key="profile_bio_suggest">✨ Gợi ý Bio (AI)</span>
+                        <div id="bio-loader" class="loader hidden"></div>
+                    </button>
+                </div>
                 
                 <div class="border-b border-gray-200">
                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                         <button class="profile-tab active whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="created" data-translate-key="profile_tab_created">Kèo đã tạo</button>
                         <button class="profile-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="joined" data-translate-key="profile_tab_joined">Kèo đã tham gia</button>
+                        <button class="profile-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="achievements" data-translate-key="nav_challenges">Thành tích</button>
                     </nav>
                 </div>
 
@@ -340,6 +566,10 @@
                    <p class="text-gray-500 text-center" data-translate-key="profile_no_joined">Bạn chưa tham gia kèo nào.</p>
                    <!-- Joined Keos will be listed here -->
                 </div>
+                 <div id="tab-content-achievements" class="py-4 max-h-60 overflow-y-auto hidden">
+                   <p class="text-gray-500 text-center" data-translate-key="coming_soon">Tính năng sắp ra mắt! (VD: Huy hiệu "Kèo Thủ", "Ma mới")</p>
+                </div>
+
 
                 <div class="mt-6 flex justify-end">
                     <button id="logout-btn" class="text-sm text-red-600 font-semibold hover:underline" data-translate-key="profile_logout">Đăng xuất</button>
@@ -348,733 +578,769 @@
         </div>
     </div>
 
-<script>
-    // --- Data ---
-    let DUMMY_KEOS = [
-      { id: '1', category: 'Ăn uống', title: 'Tìm người ăn trưa bún đậu Cây Bàng', location: '1km - Cây Bàng, Chùa Láng', time: 'Còn 30 phút', participants: ['An', 'Minh', 'Hoa'], maxParticipants: 4, avatar: '🍔', lat: 21.025, lng: 105.800, creator: 'An'},
-      { id: '2', category: 'Thể thao', title: 'Lập team đá bóng sân Cầu Giấy', location: '2.5km - Sân bóng Cầu Giấy', time: 'Bắt đầu lúc 17:00', participants: ['Hùng', 'Sơn', 'Đức', 'Kiên', 'Long'], maxParticipants: 7, avatar: '⚽️', lat: 21.030, lng: 105.790, creator: 'Hùng'},
-      { id: '3', category: 'Học tập', title: 'Tìm bạn học nhóm môn Triết', location: '500m - Thư viện Tạ Quang Bửu', time: 'Bây giờ', participants: ['Linh'], maxParticipants: 3, avatar: '📚', lat: 21.006, lng: 105.843, creator: 'Linh'},
-      { id: '4', category: 'Giải trí', title: 'Tìm 2 người xem phim Oppenheimer suất 8h', location: '3km - CGV Vincom NCT', time: 'Còn 2 giờ', participants: ['Mai', 'Tú'], maxParticipants: 4, avatar: '🎬', lat: 21.018, lng: 105.810, creator: 'Mai'},
-      { id: '5', category: 'Ăn uống', title: 'Đi uống trà chanh Nhà Thờ', location: '4km - Phố Nhà Thờ', time: 'Tối nay 8h', participants: ['Quang', 'Trang'], maxParticipants: 5, avatar: '🍋', lat: 21.028, lng: 105.850, creator: 'Quang'},
-    ];
+<script type="module">
+    // ĐÃ XÓA TÍCH HỢP FIREBASE
     
-    // --- User State ---
-    let currentUser = { name: 'Minh Anh', university: 'Đại học Quốc gia Hà Nội', avatarInitial: 'MA' }; // Default user
-    let userCreatedKeos = [];
-    let userJoinedKeos = [];
-
-    // --- Translations Object ---
-    const translations = {
-        vi: {
-            // Login & Auth
-            login_prompt: 'Đăng nhập để bắt đầu kết nối!',
-            login_email: 'Email',
-            login_password: 'Mật khẩu',
-            login_terms: 'Tôi đồng ý với ',
-            login_terms_link: 'Điều khoản',
-            login_policy_link: 'Chính sách',
-            login_button: 'Đăng nhập',
-            login_with: 'hoặc đăng nhập với',
-            login_signup_prompt: 'Chưa có tài khoản? ',
-            login_signup_link: 'Đăng ký ngay',
-            signup_title: 'Tạo tài khoản',
-            signup_subtitle: 'Tham gia cộng đồng Kèo Thơm!',
-            signup_name: 'Họ và Tên',
-            signup_email: 'Email',
-            signup_password: 'Mật khẩu',
-            signup_button: 'Đăng ký',
-            signup_login_prompt: 'Đã có tài khoản? ',
-            signup_login_link: 'Đăng nhập',
-            verify_title: 'Xác minh danh tính',
-            verify_subtitle: 'Để đảm bảo an toàn, vui lòng tải lên ảnh mặt trước CCCD của bạn.',
-            verify_front: 'Nhấn để tải ảnh lên',
-            verify_button: 'Hoàn tất & Bắt đầu',
-            upload_status_uploaded: 'Đã tải lên ✓',
-
-            // Main App UI
-            tagline: 'Kết nối tức thời, Gắn kết cộng đồng.',
-            nav_home: 'Trang chủ',
-            nav_my_keos: 'Kèo của tôi',
-            nav_notifications: 'Thông báo',
-            create_keo_button: 'Tạo Kèo Mới',
-            search_placeholder: 'Tìm kiếm kèo...',
-            feed_title: 'Kèo Nổi Bật Quanh Đây',
-            filter_all: 'Tất cả',
-            filter_eating: '🍔 Ăn uống',
-            filter_sports: '⚽️ Thể thao',
-            filter_study: '📚 Học tập',
-            filter_fun: '🎬 Giải trí',
-            map_title: 'Bản đồ Kèo',
-            details_prompt_title: 'Chọn một kèo để xem chi tiết',
-            details_prompt_subtitle: 'Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.',
-            no_keo_found: 'Không có kèo nào phù hợp.',
-            participants_count_suffix: 'người',
-
-            // Create Keo Modal
-            modal_create_title: 'Tạo Kèo Mới',
-            modal_create_content: 'Nội dung kèo',
-            modal_create_suggest: '✨ Gợi ý',
-            modal_create_category: 'Loại kèo',
-            category_eating: 'Ăn uống',
-            category_sports: 'Thể thao',
-            category_study: 'Học tập',
-            category_fun: 'Giải trí',
-            modal_create_location: 'Địa điểm',
-            modal_create_max_participants: 'Số người tối đa (gồm bạn)',
-            modal_cancel: 'Hủy',
-            modal_create_publish: 'Đăng Kèo',
-            alert_fill_fields: 'Vui lòng điền đầy đủ nội dung và địa điểm.',
-
-            // Profile Modal
-            profile_university: 'Sinh viên - Đại học Quốc gia Hà Nội',
-            profile_tab_created: 'Kèo đã tạo',
-            profile_tab_joined: 'Kèo đã tham gia',
-            profile_no_created: 'Chưa có hoạt động nào.',
-            profile_no_joined: 'Bạn chưa tham gia kèo nào.',
-            profile_logout: 'Đăng xuất',
-
-            // Keo Details
-            details_participants_title: 'Những người sẽ tham gia',
-            details_join_button: 'Tham gia Kèo này',
-            details_leave_button: 'Rời khỏi Kèo',
-            details_full: 'Kèo đã đủ người',
-            details_icebreaker_button: '✨ Gợi ý câu chào hỏi (AI)',
-            details_icebreaker_title: '✨ Thử vài câu hỏi phá băng (AI):',
-
-            // Gemini specific
-            gemini_error: 'Đã xảy ra lỗi, vui lòng thử lại.',
-            gemini_prompt_title: 'Vui lòng nhập loại kèo hoặc địa điểm để AI gợi ý.',
-        },
-        en: {
-            // Login & Auth
-            login_prompt: 'Login to start connecting!',
-            login_email: 'Email',
-            login_password: 'Password',
-            login_terms: 'I agree to the ',
-            login_terms_link: 'Terms',
-            login_policy_link: 'Policy',
-            login_button: 'Login',
-            login_with: 'or log in with',
-            login_signup_prompt: "Don't have an account? ",
-            login_signup_link: 'Sign up now',
-            signup_title: 'Create Account',
-            signup_subtitle: 'Join the Kèo Thơm community!',
-            signup_name: 'Full Name',
-            signup_email: 'Email',
-            signup_password: 'Password',
-            signup_button: 'Sign Up',
-            signup_login_prompt: 'Already have an account? ',
-            signup_login_link: 'Log in',
-            verify_title: 'Identity Verification',
-            verify_subtitle: 'For community safety, please upload the front of your National ID.',
-            verify_front: 'Click to upload photo',
-            verify_button: 'Complete & Get Started',
-            upload_status_uploaded: 'Uploaded ✓',
-
-            // Main App UI
-            tagline: 'Spontaneous Connections, Stronger Communities.',
-            nav_home: 'Home',
-            nav_my_keos: 'My Keos',
-            nav_notifications: 'Notifications',
-            create_keo_button: 'Create New Keo',
-            search_placeholder: 'Search for keos...',
-            feed_title: 'Featured Keos Nearby',
-            filter_all: 'All',
-            filter_eating: '🍔 Eating',
-            filter_sports: '⚽️ Sports',
-            filter_study: '📚 Study',
-            filter_fun: '🎬 Fun',
-            map_title: 'Keo Map',
-            details_prompt_title: 'Select a keo to see details',
-            details_prompt_subtitle: 'Information about location, time, and participants will appear here.',
-            no_keo_found: 'No matching keos found.',
-            participants_count_suffix: 'people',
-
-             // Create Keo Modal
-            modal_create_title: 'Create New Keo',
-            modal_create_content: 'Keo content',
-            modal_create_suggest: '✨ Suggest',
-            modal_create_category: 'Keo type',
-            category_eating: 'Eating',
-            category_sports: 'Sports',
-            category_study: 'Study',
-            category_fun: 'Fun',
-            modal_create_location: 'Location',
-            modal_create_max_participants: 'Max participants (incl. you)',
-            modal_cancel: 'Cancel',
-            modal_create_publish: 'Post Keo',
-            alert_fill_fields: 'Please fill in the content and location.',
-
-            // Profile Modal
-            profile_university: 'Student - Vietnam National University, Hanoi',
-            profile_tab_created: 'Created Keos',
-            profile_tab_joined: 'Joined Keos',
-            profile_no_created: 'No activities yet.',
-            profile_no_joined: "You haven't joined any keos yet.",
-            profile_logout: 'Logout',
-
-            // Keo Details
-            details_participants_title: 'Who will join',
-            details_join_button: 'Join this Keo',
-            details_leave_button: 'Leave Keo',
-            details_full: 'Keo is full',
-            details_icebreaker_button: '✨ Suggest Icebreakers (AI)',
-            details_icebreaker_title: '✨ Try some icebreakers (AI):',
-
-            // Gemini specific
-            gemini_error: 'An error occurred, please try again.',
-            gemini_prompt_title: 'Please enter a keo type or location for AI suggestions.',
-        }
-    };
+    // BỌC TẤT CẢ LOGIC BÊN TRONG DOMCONTENTLOADED
+    document.addEventListener("DOMContentLoaded", () => {
     
-    // --- DOM Elements ---
-    const authContainer = document.getElementById('auth-container');
-    const loginScreen = document.getElementById('login-screen');
-    const signupScreen = document.getElementById('signup-screen');
-    const verificationScreen = document.getElementById('verification-screen');
-    const mainApp = document.getElementById('main-app');
-    const loginBtn = document.getElementById('login-btn');
-    const signupLink = document.getElementById('signup-link');
-    const backToLoginLink = document.getElementById('back-to-login-link');
-    const signupBtn = document.getElementById('signup-btn');
-    const submitVerificationBtn = document.getElementById('submit-verification-btn');
-    const cccdUploadInput = document.getElementById('cccd-upload');
-    const uploadText = document.getElementById('upload-text');
-    const termsCheckbox = document.getElementById('terms-checkbox');
-    const keoFeed = document.getElementById('keo-feed');
-    const filtersContainer = document.getElementById('filters');
-    const keoDetailsContainer = document.getElementById('keo-details');
-    const profileBtn = document.getElementById('profile-btn');
-    const profileModal = document.getElementById('profile-modal');
-    const logoutBtn = document.getElementById('logout-btn');
-    const profileName = document.getElementById('profile-modal-name');
-    const profileUniversity = document.getElementById('profile-modal-university');
-    const profileAvatar = document.getElementById('profile-modal-avatar');
-    const profileAvatarText = document.querySelector('#profile-btn img');
-    const profileHeaderText = document.querySelector('#profile-btn span');
-    const createdKeosTab = document.getElementById('tab-content-created');
-    const joinedKeosTab = document.getElementById('tab-content-joined');
-    
-    const createKeoBtn = document.getElementById('create-keo-btn');
-    const createKeoModal = document.getElementById('create-keo-modal');
-    
-    const geminiTitleBtn = document.getElementById('gemini-title-btn');
-    const titleLoader = document.getElementById('title-loader');
-    const titleSuggestionsContainer = document.getElementById('title-suggestions');
-    const keoTitleInput = document.getElementById('keo-title-input');
-    const keoCategoryInput = document.getElementById('keo-category-input');
-    const keoLocationInput = document.getElementById('keo-location-input');
-    const keoMaxInput = document.getElementById('keo-max-input');
-    const publishKeoBtn = document.getElementById('publish-keo-btn');
-    
-    let map;
-    let markers = [];
-    let activeMarker = null;
+        // --- Data ---
+        let DUMMY_KEOS = [
+          { id: '1', category: 'Ăn uống', title: 'Tìm người ăn trưa bún đậu Cây Bàng', location: '1km - Cây Bàng, Chùa Láng', time: 'Còn 30 phút', participants: ['An', 'Minh', 'Hoa'], maxParticipants: 4, avatar: '🍔', lat: 21.025, lng: 105.800, creator: 'An'},
+          { id: '2', category: 'Thể thao', title: 'Lập team đá bóng sân Cầu Giấy', location: '2.5km - Sân bóng Cầu Giấy', time: 'Bắt đầu lúc 17:00', participants: ['Hùng', 'Sơn', 'Đức', 'Kiên', 'Long'], maxParticipants: 7, avatar: '⚽️', lat: 21.030, lng: 105.790, creator: 'Hùng'},
+          { id: '3', category: 'Học tập', title: 'Tìm bạn học nhóm môn Triết', location: '500m - Thư viện Tạ Quang Bửu', time: 'Bây giờ', participants: ['Linh'], maxParticipants: 3, avatar: '📚', lat: 21.006, lng: 105.843, creator: 'Linh'},
+          { id: '4', category: 'Giải trí', title: 'Tìm 2 người xem phim Oppenheimer suất 8h', location: '3km - CGV Vincom NCT', time: 'Còn 2 giờ', participants: ['Mai', 'Tú'], maxParticipants: 4, avatar: '🎬', lat: 21.018, lng: 105.810, creator: 'Mai'},
+          { id: '5', category: 'Ăn uống', title: 'Đi uống trà chanh Nhà Thờ', location: '4km - Phố Nhà Thờ', time: 'Tối nay 8h', participants: ['Quang', 'Trang'], maxParticipants: 5, avatar: '🍋', lat: 21.028, lng: 105.850, creator: 'Quang'},
+        ];
+        
+        // --- User State ---
+        let currentUser = null; // Bắt đầu là null (chưa đăng nhập)
+        let userCreatedKeos = [];
+        let userJoinedKeos = [];
 
-    let currentLang = 'vi';
+        // --- Translations Object ---
+        const translations = {
+            vi: {
+                login_prompt: 'Đăng nhập để bắt đầu kết nối!',
+                login_email: 'Email',
+                login_password: 'Mật khẩu',
+                login_terms: 'Tôi đồng ý với ',
+                login_terms_link: 'Điều khoản',
+                login_policy_link: 'Chính sách',
+                login_button: 'Đăng nhập',
+                login_with: 'hoặc đăng nhập với',
+                login_signup_prompt: 'Chưa có tài khoản? ',
+                login_signup_link: 'Đăng ký ngay',
+                signup_title: 'Tạo tài khoản',
+                signup_subtitle: 'Tham gia cộng đồng Kèo Thơm!',
+                signup_name: 'Họ và Tên',
+                signup_email: 'Email',
+                signup_password: 'Mật khẩu',
+                signup_button: 'Đăng ký',
+                signup_login_prompt: 'Đã có tài khoản? ',
+                signup_login_link: 'Đăng nhập',
+                verify_title: 'Xác minh danh tính',
+                verify_subtitle: 'Để đảm bảo an toàn, vui lòng tải lên ảnh mặt trước CCCD của bạn.',
+                verify_front: 'Nhấn để tải ảnh lên',
+                verify_button: 'Hoàn tất & Bắt đầu',
+                upload_status_uploaded: 'Đã tải lên ✓',
+                tagline: 'Kết nối tức thời, Gắn kết cộng đồng.',
+                nav_home: 'Tìm Kèo',
+                nav_reels: 'Kèo Reels',
+                nav_marketplace: 'Marketplace',
+                nav_coupons: 'Coupon Hub',
+                nav_challenges: 'Thử thách & BXH',
+                nav_qna: 'Hỏi Nhanh',
+                nav_sos: 'SOS Kèo',
+                nav_my_keos: 'Kèo của tôi',
+                nav_notifications: 'Thông báo',
+                create_keo_button: 'Tạo Kèo Mới',
+                search_placeholder: 'Tìm kiếm kèo...',
+                feed_title: 'Kèo Nổi Bật Quanh Đây',
+                filter_all: 'Tất cả',
+                filter_eating: '🍔 Ăn uống',
+                filter_sports: '⚽️ Thể thao',
+                filter_study: '📚 Học tập',
+                filter_fun: '🎬 Giải trí',
+                map_title: 'Bản đồ Kèo',
+                map_placeholder: 'Bản đồ Google Maps (đã tắt)',
+                details_prompt_title: 'Chọn một kèo để xem chi tiết',
+                details_prompt_subtitle: 'Thông tin về địa điểm, thời gian và người tham gia sẽ hiện ở đây.',
+                modal_create_title: 'Tạo Kèo Mới',
+                modal_create_content: 'Nội dung kèo',
+                modal_create_suggest: '✨ Gợi ý',
+                modal_create_category: 'Loại kèo',
+                category_eating: 'Ăn uống',
+                category_sports: 'Thể thao',
+                category_study: 'Học tập',
+                category_fun: 'Giải trí',
+                modal_create_location: 'Địa điểm',
+                modal_create_max_participants: 'Số người tối đa (gồm bạn)',
+                modal_cancel: 'Hủy',
+                modal_create_publish: 'Đăng Kèo',
+                alert_fill_fields: 'Vui lòng điền đầy đủ nội dung và địa điểm.',
+                alert_fill_name: 'Vui lòng nhập tên của bạn.',
+                alert_fill_email: 'Vui lòng nhập email.',
+                alert_cancel_keo_confirm: 'Bạn có chắc muốn hủy kèo này không? Hành động này không thể hoàn tác.',
+                profile_university: 'Sinh viên - Đại học Quốc gia Hà Nội',
+                profile_tab_created: 'Kèo đã tạo',
+                profile_tab_joined: 'Kèo đã tham gia',
+                my_keos_created_title: 'Kèo bạn đã tạo',
+                my_keos_joined_title: 'Kèo bạn đã tham gia',
+                profile_no_created: 'Chưa có hoạt động nào.',
+                profile_no_joined: 'Bạn chưa tham gia kèo nào.',
+                profile_logout: 'Đăng xuất',
+                details_participants_title: 'Những người sẽ tham gia',
+                details_join_button: 'Tham gia Kèo này',
+                details_leave_button: 'Rời khỏi Kèo',
+                details_cancel_button: 'Hủy Kèo (Bạn là chủ kèo)',
+                details_full: 'Kèo đã đủ người',
+                details_icebreaker_button: '✨ Gợi ý câu chào hỏi (AI)',
+                details_icebreaker_title: '✨ Thử vài câu hỏi phá băng (AI):',
+                weather_forecast: 'Dự báo thời tiết',
+                community_vouch: 'Bảo chứng',
+                coming_soon: 'Tính năng sắp ra mắt!',
+                gemini_error: 'Đã xảy ra lỗi, vui lòng thử lại.',
+                gemini_prompt_title: 'Vui lòng nhập loại kèo hoặc địa điểm để AI gợi ý.',
+                profile_bio: 'Giới thiệu ngắn',
+                profile_bio_suggest: '✨ Gợi ý Bio (AI)',
+                challenge_suggest_btn: '✨ Gợi ý Thử thách Tuần mới',
+                challenge_idea_title: 'Ý tưởng Thử thách:',
+                
+                // BỔ SUNG KEY CÒN THIẾU
+                participants_count_suffix: 'người',
+            },
+            en: {
+                login_prompt: 'Login to start connecting!',
+                login_email: 'Email',
+                login_password: 'Password',
+                login_terms: 'I agree to the ',
+                login_terms_link: 'Terms',
+                login_policy_link: 'Policy',
+                login_button: 'Login',
+                login_with: 'or log in with',
+                login_signup_prompt: "Don't have an account? ",
+                login_signup_link: 'Sign up now',
+                signup_title: 'Create Account',
+                signup_subtitle: 'Join the Kèo Thơm community!',
+                signup_name: 'Full Name',
+                signup_email: 'Email',
+                signup_password: 'Password',
+                signup_button: 'Sign Up',
+                signup_login_prompt: 'Already have an account? ',
+                signup_login_link: 'Log in',
+                verify_title: 'Identity Verification',
+                verify_subtitle: 'For community safety, please upload the front of your National ID.',
+                verify_front: 'Click to upload photo',
+                verify_button: 'Complete & Get Started',
+                upload_status_uploaded: 'Uploaded ✓',
+                tagline: 'Spontaneous Connections, Stronger Communities.',
+                nav_home: 'Find Keos',
+                nav_reels: 'Keo Reels',
+                nav_marketplace: 'Marketplace',
+                nav_coupons: 'Coupon Hub',
+                nav_challenges: 'Challenges & Rankings',
+                nav_qna: 'Quick Q&A',
+                nav_sos: 'SOS Keo',
+                nav_my_keos: 'My Keos',
+                nav_notifications: 'Notifications',
+                create_keo_button: 'Create New Keo',
+                search_placeholder: 'Search for keos...',
+                feed_title: 'Featured Keos Nearby',
+                filter_all: 'All',
+                filter_eating: '🍔 Eating',
+                filter_sports: '⚽️ Sports',
+                filter_study: '📚 Study',
+                filter_fun: '🎬 Fun',
+                map_title: 'Keo Map',
+                map_placeholder: 'Google Map (disabled)',
+                details_prompt_title: 'Select a keo to see details',
+                details_prompt_subtitle: 'Information about location, time, and participants will appear here.',
+                modal_create_title: 'Create New Keo',
+                modal_create_content: 'Keo content',
+                modal_create_suggest: '✨ Suggest',
+                modal_create_category: 'Keo type',
+                category_eating: 'Eating',
+                category_sports: 'Sports',
+                category_study: 'Study',
+                category_fun: 'Fun',
+                modal_create_location: 'Location',
+                modal_create_max_participants: 'Max participants (incl. you)',
+                modal_cancel: 'Cancel',
+                modal_create_publish: 'Post Keo',
+                profile_university: 'Student - Vietnam National University, Hanoi',
+                profile_tab_created: 'Created Keos',
+                profile_tab_joined: 'Joined Keos',
+                my_keos_created_title: 'Keos You Created',
+                my_keos_joined_title: 'Keos You Joined',
+                profile_no_created: 'No activities yet.',
+                profile_no_joined: "You haven't joined any keos yet.",
+                profile_logout: 'Logout',
+                details_participants_title: 'Who will join',
+                details_join_button: 'Join this Keo',
+                details_leave_button: 'Leave Keo',
+                details_cancel_button: 'Cancel Keo (You are creator)',
+                details_full: 'Keo is full',
+                details_icebreaker_button: '✨ Suggest Icebreakers (AI)',
+                details_icebreaker_title: '✨ Try some icebreakers (AI):',
+                weather_forecast: 'Weather Forecast',
+                community_vouch: 'Vouch',
+                coming_soon: 'Feature coming soon!',
+                gemini_error: 'An error occurred, please try again.',
+                gemini_prompt_title: 'Please enter a keo type or location for AI suggestions.',
+                alert_fill_fields: 'Please fill in the content and location.',
+                alert_fill_name: 'Please enter your name.',
+                alert_fill_email: 'Please enter your email.',
+                alert_cancel_keo_confirm: 'Are you sure you want to cancel this keo? This action cannot be undone.',
+                my_keos_created_title: 'Keos You Created',
+                my_keos_joined_title: 'Keos You Joined',
+                profile_bio: 'Short Bio',
+                profile_bio_suggest: '✨ Suggest Bio (AI)',
+                challenge_suggest_btn: '✨ Suggest New Weekly Challenge',
+                challenge_idea_title: 'Challenge Idea:',
 
-    // --- Language Function ---
-    function setLanguage(lang) {
-        currentLang = lang;
-        document.documentElement.lang = lang;
-        document.querySelectorAll('[data-translate-key]').forEach(el => {
-            const key = el.getAttribute('data-translate-key');
-            if (translations[lang] && translations[lang][key]) {
-                // Handle complex innerHTML for terms link
-                 if (key === 'login_terms') {
-                     el.innerHTML = `${translations[lang][key]}<a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_terms_link']}</a> ${lang === 'vi' ? 'và' : 'and'} <a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_policy_link']}</a>`;
-                 } else {
-                     el.textContent = translations[lang][key];
-                 }
+                // BỔ SUNG KEY CÒN THIẾU
+                participants_count_suffix: 'people',
             }
-        });
+        };
         
-        // Re-attach listeners for dynamically created links in login/signup prompts
-        const signupPrompt = document.querySelector('[data-translate-key="login_signup_prompt"]');
-        if (signupPrompt) {
-            signupPrompt.innerHTML = `${translations[lang]['login_signup_prompt']}<a href="#" id="signup-link-dynamic" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_signup_link']}</a>`;
-            document.getElementById('signup-link-dynamic').addEventListener('click', showSignupScreen);
-        }
-        const loginPrompt = document.querySelector('[data-translate-key="signup_login_prompt"]');
-         if (loginPrompt) {
-            loginPrompt.innerHTML = `${translations[lang]['signup_login_prompt']}<a href="#" id="back-to-login-link-dynamic" class="font-medium text-teal-600 hover:underline">${translations[lang]['signup_login_link']}</a>`;
-            document.getElementById('back-to-login-link-dynamic').addEventListener('click', showLoginScreen);
-        }
-
-        // Update placeholder texts if needed
-        const searchInput = document.querySelector('input[data-translate-key="search_placeholder"]');
-        if(searchInput) searchInput.placeholder = translations[lang].search_placeholder;
+        // --- DOM Elements ---
+        const authContainer = document.getElementById('auth-container');
+        const loginScreen = document.getElementById('login-screen');
+        const signupScreen = document.getElementById('signup-screen');
+        const verificationScreen = document.getElementById('verification-screen');
+        const mainApp = document.getElementById('main-app');
         
-        // Update language buttons state
-        document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
-        document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-
-        // Update university name in profile modal based on language
-        profileUniversity.textContent = lang === 'vi' ? 'Sinh viên - Đại học Quốc gia Hà Nội' : 'Student - Vietnam National University, Hanoi';
-
-
-        // Re-render dynamic content like Keo feed and details
-        const currentFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-        renderKeos(currentFilter); // This function needs to handle translations internally
+        const loginBtn = document.getElementById('login-btn');
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginErrorMsg = document.getElementById('login-error-msg');
         
-        // Reset details pane
-        keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[lang].details_prompt_title}</p><p class="text-sm">${translations[lang].details_prompt_subtitle}</p></div>`;
+        const signupLink = document.getElementById('signup-link');
+        const backToLoginLink = document.getElementById('back-to-login-link');
         
-        // Update profile tab content placeholders
-        if (userCreatedKeos.length === 0) createdKeosTab.querySelector('p').textContent = translations[lang].profile_no_created;
-        if (userJoinedKeos.length === 0) joinedKeosTab.querySelector('p').textContent = translations[lang].profile_no_joined;
-    }
+        const signupBtn = document.getElementById('signup-btn');
+        const signupNameInput = document.getElementById('signup-name');
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupPasswordInput = document.getElementById('signup-password');
+        const signupErrorMsg = document.getElementById('signup-error-msg');
 
+        const submitVerificationBtn = document.getElementById('submit-verification-btn');
+        const cccdUploadInput = document.getElementById('cccd-upload');
+        const uploadText = document.getElementById('upload-text');
+        const termsCheckbox = document.getElementById('terms-checkbox');
+        
+        const keoFeed = document.getElementById('keo-feed');
+        const filtersContainer = document.getElementById('filters');
+        const keoDetailsContainer = document.getElementById('keo-details');
+        
+        const profileBtn = document.getElementById('profile-btn');
+        const profileModal = document.getElementById('profile-modal');
+        const logoutBtn = document.getElementById('logout-btn');
+        const profileName = document.getElementById('profile-modal-name');
+        const profileUniversity = document.getElementById('profile-modal-university');
+        const profileAvatar = document.getElementById('profile-modal-avatar');
+        const profileHeaderAvatar = document.getElementById('profile-header-avatar');
+        const profileHeaderName = document.getElementById('profile-header-name');
+        const createdKeosTab = document.getElementById('tab-content-created');
+        const joinedKeosTab = document.getElementById('tab-content-joined');
+        const achievementsTab = document.getElementById('tab-content-achievements');
+        
+        const geminiBioBtn = document.getElementById('gemini-bio-btn');
+        const bioLoader = document.getElementById('bio-loader');
+        const profileBioInput = document.getElementById('profile-bio-input');
+        const geminiChallengeBtn = document.getElementById('gemini-challenge-btn');
+        const challengeLoader = document.getElementById('challenge-loader');
+        const challengeSuggestionBox = document.getElementById('challenge-suggestion-box');
+        const challengeSuggestionText = document.getElementById('challenge-suggestion-text');
+        
+        const createKeoBtn = document.getElementById('create-keo-btn');
+        const createKeoModal = document.getElementById('create-keo-modal');
+        
+        const geminiTitleBtn = document.getElementById('gemini-title-btn');
+        const titleLoader = document.getElementById('title-loader');
+        const titleSuggestionsContainer = document.getElementById('title-suggestions');
+        const keoTitleInput = document.getElementById('keo-title-input');
+        const keoCategoryInput = document.getElementById('keo-category-input');
+        const keoLocationInput = document.getElementById('keo-location-input');
+        const keoMaxInput = document.getElementById('keo-max-input');
+        const publishKeoBtn = document.getElementById('publish-keo-btn');
+        
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const views = document.querySelectorAll('.view-content');
+        
+        let map = null; // Map object is now just a placeholder
+        let markers = [];
+        let activeMarker = null;
+        let currentLang = 'vi';
 
-    // --- Map Functions ---
-    function initMap() {
-        const hanoi = { lat: 21.0278, lng: 105.8342 };
-        map = new google.maps.Map(document.getElementById("map"), {
-            center: hanoi,
-            zoom: 13,
-            disableDefaultUI: true,
-            styles: [{"featureType": "poi","stylers": [{ "visibility": "off" }]},{"featureType": "road","elementType": "labels.icon","stylers": [{ "visibility": "off" }]},{"featureType": "transit","stylers": [{ "visibility": "off" }]}]
-        });
-        renderKeos('all'); // Initial render populates map
-    }
-
-    const highlightMarker = (marker) => {
-        if (!marker) return;
-        if (activeMarker) activeMarker.setAnimation(null);
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(() => marker.setAnimation(null), 1400); // Bounce for 2 cycles
-        map.panTo(marker.getPosition());
-        map.setZoom(15);
-        activeMarker = marker;
-    };
-
-     const clearMarkers = () => {
-        markers.forEach(marker => marker.setMap(null));
-        markers = [];
-        activeMarker = null;
-    }
-
-    const addMarker = (keo) => {
-        if (!map || !keo.lat || !keo.lng) return;
-        const marker = new google.maps.Marker({
-            position: { lat: keo.lat, lng: keo.lng },
-            map: map,
-            title: keo.title,
-            icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#14B8A6', fillOpacity: 1, strokeWeight: 2, strokeColor: 'white' }
-        });
-        marker.keoId = keo.id;
-        marker.addListener("click", () => {
-             renderKeoDetails(keo); // Show details when marker is clicked
-        });
-        markers.push(marker);
-        return marker; // Return the marker object
-    }
-
-    // --- Gemini API Call Function ---
-    async function callGemini(prompt, retries = 3, delay = 1000) {
-        const apiKey = ""; // Keep empty
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        // --- Language Function ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-translate-key]').forEach(el => {
+                const key = el.getAttribute('data-translate-key');
+                if (translations[lang] && translations[lang][key]) {
+                    if (key === 'login_terms') {
+                        el.innerHTML = `${translations[lang][key]}<a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_terms_link']}</a> ${lang === 'vi' ? 'và' : 'and'} <a href="#" class="font-medium text-teal-600 hover:underline">${translations[lang]['login_policy_link']}</a>`;
+                    } else if (key === 'login_signup_prompt') {
+                         el.innerHTML = `${translations[lang][key]}<a href="#" class="font-medium text-teal-600 hover:underline" data-dynamic-link="signup">${translations[lang]['login_signup_link']}</a>`;
+                    } else if (key === 'signup_login_prompt') {
+                         el.innerHTML = `${translations[lang][key]}<a href="#" class="font-medium text-teal-600 hover:underline" data-dynamic-link="login">${translations[lang]['signup_login_link']}</a>`;
+                    } else {
+                         el.textContent = translations[lang][key];
+                    }
+                }
             });
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const result = await response.json();
-            const candidate = result.candidates?.[0];
-            if (candidate?.content?.parts?.[0]?.text) {
-                return candidate.content.parts[0].text;
-            } else { throw new Error("Invalid response structure from Gemini API"); }
-        } catch (error) {
-            console.error("Gemini API call failed:", error);
-            if (retries > 0) {
-                await new Promise(res => setTimeout(res, delay));
-                return callGemini(prompt, retries - 1, delay * 2);
+            
+            attachDynamicAuthListeners();
+            
+            const searchInput = document.querySelector('input[data-translate-key="search_placeholder"]');
+            if(searchInput) searchInput.placeholder = translations[lang].search_placeholder;
+            
+            document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            
+            if (currentUser) {
+                profileUniversity.textContent = currentUser.university || (lang === 'vi' ? 'Sinh viên - Đại học Quốc gia Hà Nội' : 'Student - Vietnam National University, Hanoi');
+            }
+
+            const currentFilterBtn = document.querySelector('.filter-btn.active');
+            const currentFilter = currentFilterBtn ? currentFilterBtn.dataset.filter : 'all';
+            if (document.getElementById('view-home') && document.getElementById('view-home').classList.contains('hidden') === false) {
+                 renderKeos(currentFilter);
+            }
+            
+            if(keoDetailsContainer) keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[lang].details_prompt_title}</p><p class="text-sm">${translations[lang].details_prompt_subtitle}</p></div>`;
+            
+            if (createdKeosTab && userCreatedKeos.length === 0) createdKeosTab.querySelector('p').textContent = translations[lang].profile_no_created;
+            if (joinedKeosTab && userJoinedKeos.length === 0) joinedKeosTab.querySelector('p').textContent = translations[lang].profile_no_joined;
+            if (achievementsTab) achievementsTab.querySelector('p').textContent = translations[lang].coming_soon;
+        }
+
+
+        // --- Map Functions (Mock) ---
+        function initMap() {
+            console.log("Mock Map Initialized (Google Maps API is not loaded)");
+            renderKeos('all');
+        }
+        window.initMap = initMap; // Make it globally accessible
+
+        const highlightMarker = (marker) => {
+             console.log("Highlighting marker:", marker.keoId);
+             if (activeMarker) activeMarker.active = false;
+             marker.active = true;
+             activeMarker = marker;
+        };
+
+         const clearMarkers = () => {
+            markers = [];
+            activeMarker = null;
+        }
+
+        const addMarker = (keo) => {
+            if (!keo.lat || !keo.lng) return;
+            const marker = {
+                position: { lat: keo.lat, lng: keo.lng },
+                title: keo.title,
+                keoId: keo.id,
+                active: false
+            };
+            markers.push(marker);
+            return marker;
+        }
+
+        // --- Gemini API Call (Mock) ---
+        async function callGemini(prompt, retries = 3, delay = 1000) {
+            console.log("Calling Gemini with prompt:", prompt);
+            await new Promise(res => setTimeout(res, 500)); // Simulate network delay
+            
+            if (prompt.includes('Gợi ý 3 tên "kèo"')) {
+                return "Kèo siêu tốc: Bún đậu Mẹt\nCà phê chiều, ai đi?\nTìm đồng đội học Triết qua đêm";
+            }
+            if (prompt.includes('Suggest 3 catchy')) {
+                return "Speed Kèo: Bun Dau Met\nAfternoon Coffee Run, anyone?\nNeed Philosophy study buddies STAT";
+            }
+            if (prompt.includes('Gợi ý 3 câu hỏi "phá băng"')) {
+                return "Mọi người biết quán này lâu chưa?\nNghe nói kèo này... vui lắm phải không?\nHọc ngành gì thế các bạn ơi?";
+            }
+            if (prompt.includes('Suggest 3 natural, fun')) {
+                return "First time at this place?\nHeard this 'keo' was fun, what do you guys think?\nWhat's everyone's major?";
+            }
+            if (prompt.includes('Viết một câu giới thiệu (bio) ngắn')) {
+                 return "Gen Z mê cầu lông, nghiện cà phê và thích chụp ảnh dạo!";
+            }
+            if (prompt.includes('Write a short, fun, one-line profile bio')) {
+                 return "Gen Z on a quest for good coffee and great stories. Loves badminton courts and photo walks!";
+            }
+            if (prompt.includes('Gợi ý một thử thách cộng đồng')) {
+                 return "Thử thách \"Foodie Tuần\": Check-in tại 3 'Kèo Ăn uống' ở 3 quán khác nhau trong 7 ngày!";
+            }
+            if (prompt.includes('Suggest a fun, hyperlocal weekly community challenge')) {
+                 return "The \"Triple Threat\" Challenge: Join one 'Eating', one 'Sports', and one 'Study' Keo this week!";
             }
             return translations[currentLang].gemini_error;
         }
-    }
-    
-    // --- Gemini Feature 1: Title Suggestion ---
-    geminiTitleBtn.addEventListener('click', async () => {
-        const category = keoCategoryInput.value;
-        const location = keoLocationInput.value;
-        if (!category && !location) {
-            alert(translations[currentLang].gemini_prompt_title);
-            return;
-        }
-        titleLoader.classList.remove('hidden');
-        geminiTitleBtn.disabled = true;
-        titleSuggestionsContainer.innerHTML = '';
-        const prompt = currentLang === 'vi' ? `Gợi ý 3 tên "kèo" thật hấp dẫn, ngắn gọn bằng tiếng Việt cho sinh viên. Văn phong trẻ trung. Loại kèo: ${category}. Địa điểm: ${location}. Chỉ trả về 3 gợi ý, mỗi gợi ý trên một dòng, không đánh số.` : `Suggest 3 catchy, short "event" names in English for university students. Keep a fun, youthful tone. Event type: ${category}. Location: ${location}. Return only 3 suggestions, each on a new line, without any numbering.`;
-        const response = await callGemini(prompt);
-        const suggestions = response.split('\n').filter(s => s.trim() !== '');
-        suggestions.forEach(suggestion => {
-            const btn = document.createElement('button');
-            btn.textContent = suggestion;
-            btn.className = 'w-full text-left p-2 bg-gray-100 rounded-md hover:bg-gray-200 text-sm';
-            btn.onclick = () => { keoTitleInput.value = suggestion; titleSuggestionsContainer.innerHTML = ''; };
-            titleSuggestionsContainer.appendChild(btn);
-        });
-        titleLoader.classList.add('hidden');
-        geminiTitleBtn.disabled = false;
-    });
-
-    // --- Gemini Feature 2: Icebreakers ---
-    const generateIcebreakers = async (keoTitle) => {
-        const icebreakerContainer = document.getElementById('icebreaker-container');
-        if (!icebreakerContainer) return; // Check if element exists
-        icebreakerContainer.innerHTML = `<div class="flex items-center justify-center p-4"><div class="loader"></div></div>`;
-        const prompt = currentLang === 'vi' ? `Gợi ý 3 câu hỏi "phá băng" tự nhiên, thú vị để bắt đầu cuộc trò chuyện cho nhóm sinh viên lần đầu gặp mặt trong hoạt động: "${keoTitle}". Giữ câu hỏi ngắn gọn. Chỉ trả về 3 câu hỏi, mỗi câu trên một dòng, không đánh số.` : `Suggest 3 natural, fun "icebreaker" questions to start a conversation for a group of university students meeting for the first time at this event: "${keoTitle}". Keep the questions short and open-ended. Return only 3 questions, each on a new line, without any numbering.`;
-        const response = await callGemini(prompt);
-        const icebreakers = response.split('\n').filter(s => s.trim() !== '');
-        icebreakerContainer.innerHTML = `<h4 class="font-bold mb-2">${translations[currentLang].details_icebreaker_title}</h4><ul class="list-disc list-inside space-y-2 text-sm text-gray-600">${icebreakers.map(q => `<li>${q}</li>`).join('')}</ul>`;
-    };
-
-    // --- Render Keo Details ---
-    const renderKeoDetails = (keo) => {
-        if (!keo) { // Handle case where keo might be undefined
-             keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
-             return;
-        }
-        const participantAvatars = keo.participants.map(p => `<div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center border-2 border-white" title="${p}">${p.charAt(0)}</div>`).join('');
-        const isParticipant = keo.participants.includes(currentUser.name);
-        const isFull = keo.participants.length >= keo.maxParticipants;
-
-        let joinButtonHTML = '';
-        if (isParticipant) {
-            joinButtonHTML = `<button id="leave-keo-btn" data-keo-id="${keo.id}" class="w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition-colors">${translations[currentLang].details_leave_button}</button>`;
-        } else if (isFull) {
-            joinButtonHTML = `<button class="w-full bg-gray-300 text-gray-500 font-bold py-3 px-4 rounded-lg cursor-not-allowed">${translations[currentLang].details_full}</button>`;
-        } else {
-             joinButtonHTML = `<button id="join-keo-btn" data-keo-id="${keo.id}" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors">${translations[currentLang].details_join_button}</button>`;
-        }
-
-        keoDetailsContainer.innerHTML = `
-            <div class="bg-gray-100 p-4 rounded-lg">
-                <p class="text-sm font-bold text-orange-600">${keo.category}</p>
-                <h2 class="text-2xl font-bold mt-1">${keo.title}</h2>
-            </div>
-            <div class="mt-4 space-y-3">
-                <div class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span class="truncate" title="${keo.location}">${keo.location}</span>
-                </div>
-                <div class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>${keo.time}</span>
-                </div>
-            </div>
-            <div class="mt-6">
-                <h4 class="font-bold mb-3">${translations[currentLang].details_participants_title} (${keo.participants.length}/${keo.maxParticipants})</h4>
-                <div class="flex -space-x-2 flex-wrap">
-                    ${participantAvatars}
-                </div>
-            </div>
-            <div id="icebreaker-section" class="mt-6 space-y-2">
-                 <button id="gemini-icebreaker-btn" class="w-full gemini-btn font-semibold py-2 px-3 rounded-md flex items-center justify-center space-x-2 text-sm">
-                    <span>${translations[currentLang].details_icebreaker_button}</span>
-                 </button>
-                 <div id="icebreaker-container" class="p-4 bg-gray-50 rounded-lg hidden"></div>
-            </div>
-            <div class="mt-4">
-                ${joinButtonHTML}
-            </div>
-        `;
         
-        // Add event listeners for dynamic buttons
-        const icebreakerBtn = document.getElementById('gemini-icebreaker-btn');
-        if(icebreakerBtn) {
-            icebreakerBtn.addEventListener('click', () => { 
-                document.getElementById('icebreaker-container')?.classList.remove('hidden');
-                generateIcebreakers(keo.title); 
+        const renderKeos = (filter = 'all') => {
+            if (!keoFeed) return;
+            keoFeed.innerHTML = '';
+            clearMarkers();
+            const translatedCategoryEating = translations[currentLang].category_eating;
+            const translatedCategorySports = translations[currentLang].category_sports;
+            const translatedCategoryStudy = translations[currentLang].category_study;
+            const translatedCategoryFun = translations[currentLang].category_fun;
+
+            // SỬA LỖI: Di chuyển khối định nghĩa 'filteredKeos' lên ĐẦU HÀM
+            const filteredKeos = filter === 'all' ? DUMMY_KEOS : DUMMY_KEOS.filter(keo => {
+                if (filter === 'Ăn uống' || filter === 'Eating') return keo.category === translatedCategoryEating || keo.category === translations['en'].category_eating;
+                if (filter === 'Thể thao' || filter === 'Sports') return keo.category === translatedCategorySports || keo.category === translations['en'].category_sports;
+                if (filter === 'Học tập' || filter === 'Study') return keo.category === translatedCategoryStudy || keo.category === translations['en'].category_study;
+                if (filter === 'Giải trí' || filter === 'Fun') return keo.category === translatedCategoryFun || keo.category === translations['en'].category_fun;
+                return false;
             });
-        }
-        
-        const joinBtn = document.getElementById('join-keo-btn');
-        if(joinBtn) {
-            joinBtn.addEventListener('click', () => handleJoinKeo(keo.id));
-        }
-        
-        const leaveBtn = document.getElementById('leave-keo-btn');
-        if(leaveBtn) {
-            leaveBtn.addEventListener('click', () => handleLeaveKeo(keo.id));
-        }
 
-        // Highlight marker on map
-        const targetMarker = markers.find(m => m.keoId === keo.id);
-        if (targetMarker) highlightMarker(targetMarker);
-    }
-
-    // --- Join/Leave Keo Logic ---
-    function handleJoinKeo(keoId) {
-        const keoIndex = DUMMY_KEOS.findIndex(k => k.id === keoId);
-        if (keoIndex !== -1 && !DUMMY_KEOS[keoIndex].participants.includes(currentUser.name) && DUMMY_KEOS[keoIndex].participants.length < DUMMY_KEOS[keoIndex].maxParticipants) {
-            DUMMY_KEOS[keoIndex].participants.push(currentUser.name);
-            userJoinedKeos.push(DUMMY_KEOS[keoIndex]); // Add to joined list
-            renderKeoDetails(DUMMY_KEOS[keoIndex]); // Re-render details
-            renderKeos(document.querySelector('.filter-btn.active').dataset.filter); // Re-render feed to update count
-        }
-    }
-    
-    function handleLeaveKeo(keoId) {
-        const keoIndex = DUMMY_KEOS.findIndex(k => k.id === keoId);
-        if (keoIndex !== -1) {
-            DUMMY_KEOS[keoIndex].participants = DUMMY_KEOS[keoIndex].participants.filter(p => p !== currentUser.name);
-             userJoinedKeos = userJoinedKeos.filter(k => k.id !== keoId); // Remove from joined list
-            renderKeoDetails(DUMMY_KEOS[keoIndex]); // Re-render details
-            renderKeos(document.querySelector('.filter-btn.active').dataset.filter); // Re-render feed to update count
-        }
-    }
-    
-    // --- Render Keo Feed ---
-    const renderKeos = (filter = 'all') => {
-        keoFeed.innerHTML = '';
-        clearMarkers(); // Clear existing markers before adding new ones
-        const filteredKeos = filter === 'all' 
-            ? DUMMY_KEOS 
-            : DUMMY_KEOS.filter(keo => keo.category === translations['vi'][`category_${filter.toLowerCase()}`] || keo.category === translations['en'][`category_${filter.toLowerCase()}`] || keo.category === filter ); // Handle category filter with translation
-
-        if (filteredKeos.length === 0) {
-            keoFeed.innerHTML = `<p class="text-center text-gray-500">${translations[currentLang].no_keo_found}</p>`;
-            return;
-        }
-
-        filteredKeos.forEach(keo => {
-            const keoCard = document.createElement('div');
-            keoCard.className = 'bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:border-teal-500 hover:shadow-md transition-all';
-            keoCard.onclick = () => renderKeoDetails(keo); 
-
-            const participantAvatars = keo.participants.slice(0, 3).map(p => 
-                `<div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold flex items-center justify-center border-2 border-white" title="${p}">${p.charAt(0)}</div>`
-            ).join('');
+            if (filteredKeos.length === 0) {
+                keoFeed.innerHTML = `<p class="text-center text-gray-500">${translations[currentLang].no_keo_found}</p>`;
+                return;
+            }
             
-            const moreParticipants = keo.participants.length > 3 
-                ? `<div class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-sm font-bold flex items-center justify-center border-2 border-white">+${keo.participants.length - 3}</div>` 
-                : '';
-
-            keoCard.innerHTML = `
-                <div class="flex items-start">
-                    <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mr-4 text-2xl flex-shrink-0">${keo.avatar}</div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-orange-600 truncate">${keo.category}</p>
-                        <h3 class="font-bold text-lg leading-tight truncate" title="${keo.title}">${keo.title}</h3>
-                        <p class="text-xs text-gray-500 mt-1 truncate" title="${keo.location}">${keo.location}</p>
-                    </div>
-                    <div class="text-right ml-2 flex-shrink-0">
-                        <p class="text-sm font-semibold text-teal-600 whitespace-nowrap">${keo.time}</p>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
-                    <div class="flex -space-x-2 flex-shrink-0">
-                        ${participantAvatars}
-                        ${moreParticipants}
-                    </div>
-                    <span class="text-sm font-bold ml-2 whitespace-nowrap">${keo.participants.length}/${keo.maxParticipants} ${translations[currentLang].participants_count_suffix}</span>
-                </div>
-            `;
-            keoFeed.appendChild(keoCard);
-
-            // Add marker to map for each keo
-            addMarker(keo);
-        });
-    };
-
-    // --- Publish Keo Functionality ---
-    publishKeoBtn.addEventListener('click', () => {
-        const title = keoTitleInput.value;
-        const category = keoCategoryInput.value;
-        const location = keoLocationInput.value;
-        const maxP = parseInt(keoMaxInput.value) || 2; // Default to 2 if invalid
-
-        if (!title.trim() || !location.trim()) {
-            alert(translations[currentLang].alert_fill_fields);
-            return;
-        }
-
-        const categoryMap = { 'Ăn uống': '🍔', 'Thể thao': '⚽️', 'Học tập': '📚', 'Giải trí': '🎬', 'Eating': '🍔', 'Sports': '⚽️', 'Study': '📚', 'Fun': '🎬' };
-
-        const newKeo = {
-            id: 'keo-' + Date.now(),
-            category: category,
-            title: title,
-            location: location,
-            time: currentLang === 'vi' ? 'Vừa xong' : 'Just now',
-            participants: [currentUser.name], // Creator automatically joins
-            maxParticipants: maxP,
-            avatar: categoryMap[category] || '🎉',
-            lat: 21.0278 + (Math.random() - 0.5) * 0.02, // Randomize coords
-            lng: 105.8342 + (Math.random() - 0.5) * 0.02,
-            creator: currentUser.name
+            // Giờ 'filteredKeos' đã được định nghĩa và có thể dùng ở đây
+            filteredKeos.forEach(keo => {
+                const keoCard = document.createElement('div');
+                keoCard.className = 'bg-white p-4 rounded-lg border border-gray-200 cursor-pointer hover:border-teal-500 hover:shadow-md transition-all';
+                keoCard.onclick = () => renderKeoDetails(keo); 
+                const participantAvatars = keo.participants.slice(0, 3).map(p => `<div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold flex items-center justify-center border-2 border-white" title="${p}">${p.charAt(0)}</div>`).join('');
+                const moreParticipants = keo.participants.length > 3 ? `<div class="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-sm font-bold flex items-center justify-center border-2 border-white">+${keo.participants.length - 3}</div>` : '';
+                
+                // SỬA LỖI CHÍNH TẢ: "whitespace-noww rap" -> "whitespace-nowrap"
+                keoCard.innerHTML = `<div class="flex items-start"><div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center mr-4 text-2xl flex-shrink-0">${keo.avatar}</div><div class="flex-1 min-w-0"><p class="text-sm font-bold text-orange-600 truncate">${keo.category}</p><h3 class="font-bold text-lg leading-tight truncate" title="${keo.title}">${keo.title}</h3><p class="text-xs text-gray-500 mt-1 truncate" title="${keo.location}">${keo.location}</p></div><div class="text-right ml-2 flex-shrink-0"><p class="text-sm font-semibold text-teal-600 whitespace-nowrap">${keo.time}</p></div></div><div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100"><div class="flex -space-x-2 flex-shrink-0">${participantAvatars}${moreParticipants}</div><span class="text-sm font-bold ml-2 whitespace-nowrap">${keo.participants.length}/${keo.maxParticipants} ${translations[currentLang].participants_count_suffix}</span></div>`;
+                keoFeed.appendChild(keoCard);
+                addMarker(keo);
+            });
+            
+            // XÓA DÒNG GỌI HÀM BỊ THỪA NÀY
+            // renderKeoList(filteredKeos, keoFeed, 'no_keo_found', false);
         };
 
-        DUMMY_KEOS.unshift(newKeo); // Add to the global list
-        userCreatedKeos.unshift(newKeo); // Add to user's created list
-        
-        // Reset and close modal
-        keoTitleInput.value = '';
-        keoLocationInput.value = '';
-        keoMaxInput.value = '5'; // Reset max participants
-        titleSuggestionsContainer.innerHTML = '';
-        closeModal(createKeoModal);
+        // --- Publish Keo Functionality ---
+        publishKeoBtn.addEventListener('click', () => {
+            if (!currentUser) { showLoginScreen(); return; }
+            const title = keoTitleInput.value;
+            const category = keoCategoryInput.value;
+            const location = keoLocationInput.value;
+            const maxP = parseInt(keoMaxInput.value) || 2;
 
-        // Update UI: Reset filter to 'all' and re-render
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
-        renderKeos('all');
-        renderKeoDetails(newKeo); // Show details of the newly created keo
-    });
-    
-    // --- Render Profile Keo Lists ---
-    function renderProfileKeoList(keos, container) {
-        if (keos.length === 0) {
-            container.innerHTML = `<p class="text-gray-500 text-center">${container.id === 'tab-content-created' ? translations[currentLang].profile_no_created : translations[currentLang].profile_no_joined}</p>`;
-            return;
-        }
-        container.innerHTML = keos.map(keo => `
-            <div class="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="openKeoFromProfile('${keo.id}')">
-                <p class="font-semibold truncate">${keo.title}</p>
-                <p class="text-xs text-gray-500">${keo.location} - ${keo.time}</p>
-            </div>
-        `).join('');
-    }
-    
-    // Function to close profile modal and show keo details
-    function openKeoFromProfile(keoId) {
-        const keo = DUMMY_KEOS.find(k => k.id === keoId);
-        if (keo) {
-            closeModal(profileModal);
-            renderKeoDetails(keo);
-             // Ensure the feed filter is 'all' to see the keo if it doesn't match current filter
+            if (!title.trim() || !location.trim()) {
+                alert(translations[currentLang].alert_fill_fields);
+                return;
+            }
+            const categoryMap = { 'Ăn uống': '🍔', 'Thể thao': '⚽️', 'Học tập': '📚', 'Giải trí': '🎬', 'Eating': '🍔', 'Sports': '⚽️', 'Study': '📚', 'Fun': '🎬' };
+            const newKeo = {
+                id: 'keo-' + Date.now(),
+                category: category,
+                title: title,
+                location: location,
+                time: currentLang === 'vi' ? 'Vừa xong' : 'Just now',
+                participants: [currentUser.name],
+                maxParticipants: maxP,
+                avatar: categoryMap[category] || '🎉',
+                lat: 21.0278 + (Math.random() - 0.5) * 0.02, // Mock coords
+                lng: 105.8342 + (Math.random() - 0.5) * 0.02, // Mock coords
+                creator: currentUser.name
+            };
+            DUMMY_KEOS.unshift(newKeo);
+            userCreatedKeos.unshift(newKeo);
+            
+            keoTitleInput.value = ''; keoLocationInput.value = ''; keoMaxInput.value = '5';
+            titleSuggestionsContainer.innerHTML = '';
+            closeModal(createKeoModal);
+            
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
-            renderKeos('all'); // Re-render feed might be needed if filter was active
+            renderKeos('all');
+            renderKeoDetails(newKeo);
+        });
+        
+        // --- Render Profile Keo Lists ---
+        function renderProfileKeoList(keos, container) {
+            if (!container) return;
+            if (keos.length === 0) {
+                const noKeoKey = container.id.includes('created') ? 'profile_no_created' : 'profile_no_joined';
+                container.innerHTML = `<p class="text-center text-gray-500">${translations[currentLang][noKeoKey]}</p>`;
+                return;
+            }
+            container.innerHTML = keos.map(keo => `
+                <div class="p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="window.openKeoFromProfile('${keo.id}')">
+                    <p class="font-semibold truncate">${keo.title}</p>
+                    <p class="text-xs text-gray-500">${keo.location} - ${keo.time}</p>
+                </div>`).join('');
         }
-    }
-
-    // --- Event Listeners ---
-    filtersContainer.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON' && e.target.classList.contains('filter-btn')) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            e.target.classList.add('active');
-            renderKeos(e.target.dataset.filter);
+        
+        window.openKeoFromProfile = (keoId) => {
+            const keo = DUMMY_KEOS.find(k => k.id === keoId);
+            if (keo) {
+                closeModal(profileModal);
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                document.querySelector('.sidebar-link[data-view="home"]').classList.add('active');
+                views.forEach(view => view.id === 'view-home' ? view.classList.remove('hidden') : view.classList.add('hidden'));
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+                renderKeos('all');
+                renderKeoDetails(keo);
+            }
         }
-    });
+        
+        // --- Render My Keos Page ---
+        function renderMyKeosPage() {
+            const createdListContainer = document.getElementById('my-created-keos-list');
+            const joinedListContainer = document.getElementById('my-joined-keos-list');
+            
+            renderKeoList(userCreatedKeos, createdListContainer, 'profile_no_created', true);
+            renderKeoList(userJoinedKeos, joinedListContainer, 'profile_no_joined', false);
+            
+            const firstTab = document.querySelector('.my-keos-tab[data-tab="my-created"]');
+            if (firstTab) firstTab.classList.add('active');
+            const secondTab = document.querySelector('.my-keos-tab[data-tab="my-joined"]');
+            if (secondTab) secondTab.classList.remove('active');
+            
+            if(createdListContainer) createdListContainer.classList.remove('hidden');
+            if(joinedListContainer) joinedListContainer.classList.add('hidden');
+        }
 
-    // Auth Flow Logic
-    function showScreen(screenToShow) {
-        [loginScreen, signupScreen, verificationScreen].forEach(screen => {
-            if (screen === screenToShow) {
-                screen.classList.remove('hidden');
+        // --- Auth Flow Logic ---
+        function showScreen(screenToShow) {
+            [loginScreen, signupScreen, verificationScreen].forEach(screen => {
+                if (screen === screenToShow) {
+                    screen.classList.remove('hidden');
+                } else {
+                    screen.classList.add('hidden');
+                }
+            });
+            if (screenToShow) {
+                authContainer.classList.remove('hidden');
+                mainApp.classList.add('hidden');
             } else {
-                screen.classList.add('hidden');
+                authContainer.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+            }
+        }
+
+        function showLoginScreen(e) { if(e) e.preventDefault(); showScreen(loginScreen); }
+        function showSignupScreen(e) { if(e) e.preventDefault(); showScreen(signupScreen); }
+
+        // MOCK Auth Handlers (Không dùng Firebase)
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = signupNameInput.value;
+            const email = signupEmailInput.value;
+            if (!name.trim()) { 
+                signupErrorMsg.textContent = translations[currentLang].alert_fill_name; 
+                signupErrorMsg.style.display = 'block';
+                return;
+            }
+            if (!email.trim()) { 
+                signupErrorMsg.textContent = translations[currentLang].alert_fill_email;
+                signupErrorMsg.style.display = 'block';
+                return;
+            }
+            currentUser = { name: name, email: email, avatarInitial: name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() || 'KT', university: translations[currentLang].profile_university };
+            signupErrorMsg.style.display = 'none';
+            showScreen(verificationScreen);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = loginEmailInput.value;
+            if (!email.trim()) {
+                 loginErrorMsg.textContent = translations[currentLang].alert_fill_email;
+                 loginErrorMsg.style.display = 'block';
+                 return;
+            }
+            const name = email.split('@')[0];
+            const avatarInitial = name.charAt(0).toUpperCase() || 'KT';
+            currentUser = { name: name, email: email, avatarInitial: avatarInitial, university: translations[currentLang].profile_university };
+            loginErrorMsg.style.display = 'none';
+            showScreen(null); // Show main app
+            setLanguage(currentLang);
+            profileHeaderName.textContent = currentUser.name;
+            profileHeaderAvatar.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            showScreen(loginScreen); // Show login
+            termsCheckbox.checked = false;
+            loginBtn.disabled = true;
+            userCreatedKeos = [];
+            userJoinedKeos = [];
+            keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
+            uploadText.textContent = translations[currentLang].verify_front;
+            uploadText.classList.remove('text-teal-600', 'font-bold');
+            submitVerificationBtn.disabled = true;
+            if(cccdUploadInput) cccdUploadInput.value = '';
+            
+            // Reset to home view when logging out
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.querySelector('.sidebar-link[data-view="home"]').classList.add('active');
+            views.forEach(view => view.id === 'view-home' ? view.classList.remove('hidden') : view.classList.add('hidden'));
+        }
+
+        // --- Attach Listeners ---
+        function attachDynamicAuthListeners() {
+            const signupLinkDynamic = document.querySelector('[data-dynamic-link="signup"]');
+            const backToLoginLinkDynamic = document.querySelector('[data-dynamic-link="login"]');
+            if(signupLinkDynamic) signupLinkDynamic.addEventListener('click', showSignupScreen);
+            if(backToLoginLinkDynamic) backToLoginLinkDynamic.addEventListener('click', showLoginScreen);
+        }
+
+        authContainer.addEventListener('click', (e) => {
+            if (e.target.id === 'login-btn') handleLogin(e);
+            if (e.target.id === 'signup-link' || e.target.dataset.dynamicLink === 'signup') showSignupScreen(e);
+            if (e.target.id === 'signup-btn') handleSignup(e);
+            if (e.target.id === 'back-to-login-link' || e.target.dataset.dynamicLink === 'login') showLoginScreen(e);
+            if (e.target.id === 'submit-verification-btn') {
+                showScreen(null); // Vào app
+                setLanguage(currentLang);
+                profileHeaderName.textContent = currentUser.name;
+                profileHeaderAvatar.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
             }
         });
-         if (screenToShow) authContainer.classList.remove('hidden'); else authContainer.classList.add('hidden');
-         if (!screenToShow) mainApp.classList.remove('hidden'); else mainApp.classList.add('hidden');
-    }
 
-    function showLoginScreen(e) { if(e) e.preventDefault(); showScreen(loginScreen); }
-    function showSignupScreen(e) { if(e) e.preventDefault(); showScreen(signupScreen); }
-
-    loginBtn.addEventListener('click', () => showScreen(null)); // Hide auth, show main app
-    signupLink.addEventListener('click', showSignupScreen);
-    backToLoginLink.addEventListener('click', showLoginScreen);
-    signupBtn.addEventListener('click', () => showScreen(verificationScreen)); // Show verification
-    submitVerificationBtn.addEventListener('click', () => showScreen(null)); // Hide auth, show main app
-    
-    logoutBtn.addEventListener('click', () => {
-        closeModal(profileModal);
-        showScreen(loginScreen); // Hide main app, show login
-        termsCheckbox.checked = false;
-        loginBtn.disabled = true;
-        // Clear user-specific data (optional, depends on real implementation)
-        userCreatedKeos = [];
-        userJoinedKeos = [];
-        // Reset details pane
-        keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
-    });
-
-    termsCheckbox.addEventListener('change', () => { loginBtn.disabled = !termsCheckbox.checked; });
-    cccdUploadInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            uploadText.textContent = translations[currentLang].upload_status_uploaded;
-            uploadText.classList.add('text-teal-600', 'font-bold');
-            submitVerificationBtn.disabled = false;
-        } else {
-             uploadText.textContent = translations[currentLang].verify_front;
-             uploadText.classList.remove('text-teal-600', 'font-bold');
-             submitVerificationBtn.disabled = true;
-        }
-    });
-
-    // Language switcher logic
-    document.getElementById('lang-vi').addEventListener('click', () => setLanguage('vi'));
-    document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
-
-    // Modal Logic
-    const openModal = (modal) => modal.classList.remove('hidden');
-    const closeModal = (modal) => modal.classList.add('hidden');
-
-    createKeoBtn.addEventListener('click', () => openModal(createKeoModal));
-    profileBtn.addEventListener('click', () => {
-        // Update profile modal before showing
-        profileName.textContent = currentUser.name;
-        // profileUniversity.textContent = currentUser.university; // Update if needed
-        profileAvatar.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
-        profileAvatarText.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
-        profileHeaderText.textContent = currentUser.name;
-        // Render keo lists
-        renderProfileKeoList(userCreatedKeos, createdKeosTab);
-        renderProfileKeoList(userJoinedKeos, joinedKeosTab);
-        // Reset to first tab
-        document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
-        document.querySelector('.profile-tab[data-tab="created"]').classList.add('active');
-        createdKeosTab.classList.remove('hidden');
-        joinedKeosTab.classList.add('hidden');
-
-        openModal(profileModal);
-    });
-    
-    document.querySelectorAll('.close-modal-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const modal = e.target.closest('.fixed[id$="-modal"]'); // Find closest modal parent
-            if (modal) closeModal(modal);
+        authContainer.addEventListener('change', (e) => {
+            if (e.target.id === 'terms-checkbox') {
+                loginBtn.disabled = !e.target.checked;
+            }
+            if (e.target.id === 'cccd-upload') {
+                if (e.target.files && e.target.files.length > 0) {
+                    uploadText.textContent = translations[currentLang].upload_status_uploaded;
+                    uploadText.classList.add('text-teal-600', 'font-bold');
+                    submitVerificationBtn.disabled = false;
+                } else {
+                     uploadText.textContent = translations[currentLang].verify_front;
+                     uploadText.classList.remove('text-teal-600', 'font-bold');
+                     submitVerificationBtn.disabled = true;
+                }
+            }
         });
-    });
 
-    document.querySelectorAll('#modals-container > .fixed').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            // Close modal if clicking on the background overlay
-            if (e.target === modal) closeModal(modal);
+        document.getElementById('lang-vi').addEventListener('click', () => setLanguage('vi'));
+        document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+
+        // Modal Logic
+        const openModal = (modal) => modal.classList.remove('hidden');
+        const closeModal = (modal) => modal.classList.add('hidden');
+
+        createKeoBtn.addEventListener('click', () => openModal(createKeoModal));
+            profileBtn.addEventListener('click', () => {
+            if (!currentUser) return;
+            
+            profileName.textContent = currentUser.name;
+            profileAvatar.src = `https://placehold.co/100x100/A7F3D0/134E4A?text=${currentUser.avatarInitial}`;
+            profileUniversity.textContent = currentUser.university || (currentLang === 'vi' ? 'Trường Đại học...' : 'University...');
+            
+            profileBioInput.value = ''; 
+
+            renderProfileKeoList(userCreatedKeos, createdKeosTab);
+            renderProfileKeoList(userJoinedKeos, joinedKeosTab);
+            
+            document.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active'));
+            document.querySelector('.profile-tab[data-tab="created"]').classList.add('active');
+            createdKeosTab.classList.remove('hidden');
+            joinedKeosTab.classList.add('hidden');
+            achievementsTab.classList.add('hidden');
+
+            openModal(profileModal);
         });
-    });
+        logoutBtn.addEventListener('click', handleLogout);
+        
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const modal = e.target.closest('.fixed[id$="-modal"]');
+                if (modal) closeModal(modal);
+            });
+        });
+
+        document.querySelectorAll('#modals-container > .fixed, #auth-container > .fixed').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    if (!modal.id.includes('-screen')) {
+                        closeModal(modal);
+                    }
+                }
+            });
+        });
+        
+        // Profile Tabs Logic
+        const profileTabs = document.querySelectorAll('.profile-tab');
+        const tabContents = { created: createdKeosTab, joined: joinedKeosTab, achievements: achievementsTab };
+        profileTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                profileTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                Object.values(tabContents).forEach(c => c.classList.add('hidden'));
+                if(tabContents[tab.dataset.tab]) {
+                    tabContents[tab.dataset.tab].classList.remove('hidden');
+                }
+                
+                if(tab.dataset.tab === 'created') renderProfileKeoList(userCreatedKeos, createdKeosTab);
+                if(tab.dataset.tab === 'joined') renderProfileKeoList(userJoinedKeos, joinedKeosTab);
+            });
+        });
+        
+        // --- Switch View Logic ---
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetViewId = link.dataset.view;
+                if (!targetViewId) return;
+
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                views.forEach(view => {
+                    if (view.id === `view-${targetViewId}`) {
+                        view.classList.remove('hidden');
+                        if (targetViewId === 'home') {
+                             renderKeos(document.querySelector('#view-home .filter-btn.active')?.dataset.filter || 'all');
+                        }
+                        if (targetViewId === 'mykeos') {
+                             renderMyKeosPage(); // Render My Keos view
+                        }
+                    } else {
+                        view.classList.add('hidden');
+                    }
+                });
+                
+                // Tắt cột bên phải (Bản đồ & Chi tiết) nếu không phải là trang chủ
+                const homeAside = document.querySelector('#view-home aside');
+                if (homeAside) {
+                    if (targetViewId !== 'home') {
+                        homeAside.classList.add('hidden'); // Ẩn cột bên phải
+                    } else {
+                        homeAside.classList.remove('hidden'); // Hiện lại cột bên phải
+                    }
+                }
+                
+                if (targetViewId !== 'home') {
+                    if(keoDetailsContainer) keoDetailsContainer.innerHTML = `<div class="text-center text-gray-500 pt-10"><p class="text-lg font-semibold">${translations[currentLang].details_prompt_title}</p><p class="text-sm">${translations[currentLang].details_prompt_subtitle}</p></div>`;
+                     if(activeMarker) activeMarker.setAnimation(null); activeMarker = null;
+                }
+            });
+        });
+
+        // --- "My Keos" Page Tab Logic ---
+        document.querySelector('#view-mykeos').addEventListener('click', (e) => {
+             // Xử lý chuyển tab
+             if (e.target.classList.contains('my-keos-tab')) {
+                 document.querySelectorAll('.my-keos-tab').forEach(t => t.classList.remove('active'));
+                 e.target.classList.add('active');
+                 
+                 const tabContentId = e.target.dataset.tab; // "my-created" or "my-joined"
+                 document.querySelectorAll('.my-keos-tab-content').forEach(c => {
+                     if (c.id === `${tabContentId}-keos-list`) {
+                         c.classList.remove('hidden');
+                     } else {
+                         c.classList.add('hidden');
+                     }
+                 });
+             }
+             
+             // Xử lý nút Hủy Kèo (Event Delegation)
+             if (e.target.classList.contains('my-keos-cancel-btn')) {
+                 const keoId = e.target.dataset.cancelId;
+                 handleCancelKeo(keoId);
+             }
+        });
+
+
+        // --- Initial State ---
+        setLanguage('vi'); // Set default language
+        showScreen(loginScreen); // Show login screen by default
+        initMap(); // Call mock map init
     
-    // Profile Tabs Logic
-    const profileTabs = document.querySelectorAll('.profile-tab');
-    const tabContents = { created: createdKeosTab, joined: joinedKeosTab };
-    profileTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            profileTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            Object.values(tabContents).forEach(c => c.classList.add('hidden'));
-            tabContents[tab.dataset.tab].classList.remove('hidden');
-            // Re-render list in case language changed while modal was open
-            if(tab.dataset.tab === 'created') renderProfileKeoList(userCreatedKeos, createdKeosTab);
-            if(tab.dataset.tab === 'joined') renderProfileKeoList(userJoinedKeos, joinedKeosTab);
-        });
-    });
-
-    // --- Initial State ---
-    loginBtn.disabled = true; // Login button disabled initially
-    submitVerificationBtn.disabled = true; // Verification button disabled initially
-    setLanguage('vi'); // Set default language
-    // Don't call initMap here, it's called by the Google Maps script callback
-
+    }); // KẾT THÚC DOMCONTENTLOADED
 </script>
-<!-- IMPORTANT: Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key -->
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"></script>
+<!-- Đã xóa script Google Maps API -->
 </body>
 </html>
-
